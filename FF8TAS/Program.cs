@@ -15,7 +15,6 @@ namespace FF8TAS
             player.SetFocus();
             player.StartRun();
             Console.ReadKey();
-
         }
     }
 }
