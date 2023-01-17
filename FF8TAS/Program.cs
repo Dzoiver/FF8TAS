@@ -9,11 +9,13 @@ namespace FF8TAS
             Console.WriteLine("FF8 TAS ready to start!");
 
             Player player = new Player();
+            ECM ecm = new ECM();
 
             player.FindProcess();
             player.MemoryInit();
             player.SetFocus();
-            player.StartRun();
+
+            player.StartRun(ecm);
             Console.ReadKey();
         }
     }

@@ -16,7 +16,7 @@ namespace FF8TAS
     class Player
     {
         public Process ff8Process;
-        private MemoryHelper64 helper;
+        static private MemoryHelper64 helper;
 
         private int textBox;
 
@@ -54,64 +54,13 @@ namespace FF8TAS
             SetForegroundWindow(h);
         }
 
-        public void StartRun()
+        public void StartRun(IRoute route)
         {
-            InputSimulator isim = new InputSimulator();
-            Console.WriteLine("Starting game");
-            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_K);
-            Thread.Sleep(30);
-            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
-            Console.WriteLine("FMV time");
-            while (!IsTextBox())
-            {
-                Thread.Sleep(33);
-            }
-            Console.WriteLine("Mashing time");
-
-            while (!IsMenu())
-            {
-                isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_K);
-                Thread.Sleep(16);
-                isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
-                Thread.Sleep(17);
-            }
-            Thread.Sleep(1000);
-
-            for (int i = 0; i < 5; i++)
-            {
-                isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_I);
-                Thread.Sleep(8);
-                isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_I);
-                Thread.Sleep(8);
-            }
-
-            // Select
-            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_H);
-            Thread.Sleep(8);
-            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_H);
-            Thread.Sleep(16);
-
-            // X
-            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_K);
-            Thread.Sleep(16);
-            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
-            Thread.Sleep(16);
-
-            // Stopwatch s = new Stopwatch();
-            // s.Start();
-            // while (s.Elapsed < TimeSpan.FromSeconds(8))
-            // {
-
-            // }
-
-
-            // Thread.Sleep(3000);
-            // while (s.Elapsed < TimeSpan.FromSeconds(5))
-            // isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_A);
-            // s.Stop();
+            //route.ValveCheck();
+            route.BalambGarden();
         }
 
-        private bool IsTextBox()
+        static public bool IsTextBox()
         {
             ulong targetAddress = helper.GetBaseAddress(0x192B585);
             byte value = helper.ReadMemory<byte>(targetAddress);
@@ -121,7 +70,7 @@ namespace FF8TAS
                 return false;
         }
 
-        private bool IsMenu()
+        static public bool IsMenu()
         {
             ulong targetAddress = helper.GetBaseAddress(0x18E490B);
             byte value = helper.ReadMemory<byte>(targetAddress);
@@ -130,5 +79,62 @@ namespace FF8TAS
             else
                 return false;
         }
+
+        static public bool IsField(int fieldId)
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x18D2FC0);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            if (value == fieldId)
+                return true;
+            else
+                return false;
+        }
+
+        static public bool CanMove()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x199D018);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            if (value == 0)
+                return true;
+            else
+                return false;
+        }
+
+        static public int GetFieldX()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x1677238);
+            int value = helper.ReadMemory<int>(targetAddress);
+            return value;
+        }
+        static public int GetFieldY()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x167723C);
+            int value = helper.ReadMemory<int>(targetAddress);
+            return value;
+        }
+        static public int GetBGDraw()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x18E4906);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        static public int GetTextID()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x148C8C8);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        static public bool CanSkipText()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x148C8C8);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            if (value == 7)
+                return true;
+            else
+                return false;
+        }
+        // 18E4906
     }
 }
