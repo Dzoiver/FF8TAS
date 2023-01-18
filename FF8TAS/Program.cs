@@ -8,14 +8,14 @@ namespace FF8TAS
         {
             Console.WriteLine("FF8 TAS ready to start!");
 
-            Memory player = new Memory();
-            ECM ecm = new ECM();
+            Memory mem = new Memory();
+            ECM ecm = new ECM(); // Game route
 
-            player.FindProcess();
-            player.MemoryInit();
-            player.SetFocus();
+            mem.FindProcess();
+            mem.MemoryInit();
+            mem.SetFocus();
 
-            player.StartRun(ecm);
+            mem.StartRun(ecm);
             Console.ReadKey();
         }
     }

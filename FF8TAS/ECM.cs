@@ -28,8 +28,10 @@ namespace FF8TAS
                 GameInput.CustomPress(WindowsInput.Native.VirtualKeyCode.VK_J, delta);
             }
         }
+
+
         // 0 -- 1 -- 13 -- 7 -- 1
-        private void ClearText(int id = 0)
+        private void HandleTextboxes(int id = 0)
         {
             while (true)
             {
@@ -49,10 +51,23 @@ namespace FF8TAS
 
                 if (Memory.LastTextStatus == 9)
                 {
-                    while (Memory.GetTextStatus(id) != 10) // Not Finished Printing
+                    while (Memory.GetTextStatus(id) != 10)
                     {
                         Thread.Sleep(pollTime);
                     }
+                }
+
+                if (Memory.LastTextStatus == 13)
+                {
+                    Choices.Choice desiredChoice = Choices.GetNextChoice();
+                    while (Memory.GetOptionChoice() != desiredChoice.desiredID && desiredChoice.name != "") // Not Finished Printing
+                    {
+                        if (desiredChoice.isCursorGoDown)
+                            GameInput.PressDown();
+                        else
+                            GameInput.PressUp();
+                    }
+                    Console.WriteLine("Desired option reached");
                 }
                 GameInput.KeyDownUpFrame(WindowsInput.Native.VirtualKeyCode.VK_K);
                 textBoxCount++;
@@ -80,11 +95,11 @@ namespace FF8TAS
 
             for (int i = 0; i < 5; i++)
             {
-                GameInput.KeyDownUpFrame(WindowsInput.Native.VirtualKeyCode.VK_I);
+                GameInput.PressTriangle();
             }
 
-            GameInput.KeyDownUpFrame(WindowsInput.Native.VirtualKeyCode.VK_H); // Start
-            GameInput.KeyDownUpFrame(WindowsInput.Native.VirtualKeyCode.VK_K); // X
+            GameInput.PressStart();
+            GameInput.PressX();
         }
 
         private void Infirmary2()
@@ -110,19 +125,26 @@ namespace FF8TAS
         {
             Console.WriteLine("Class room field");
 
-            //while (Memory.GetSquallAnimID() != 8)
-            //{
-            //    Thread.Sleep(200);
-            //}
+            while (Memory.GetSquallAnimID() != 8)
+            {
+                Thread.Sleep(200);
+            }
 
             Console.WriteLine("Hold UR");
             GameInput.HoldUp();
             GameInput.HoldRight();
 
+
+            while (!Memory.CanMove())
+            {
+                Thread.Sleep(33);
+            }
+
             while (Memory.GetFieldX() < 1242)
             {
                 Thread.Sleep(pollTime);
             }
+            Console.WriteLine("Release Up");
             GameInput.ReleaseUp();
 
             while (Memory.GetBGDraw() == 0) // Front of the Class
@@ -166,27 +188,224 @@ namespace FF8TAS
 
             GameInput.ReleaseRight();
         }
+
+        private void SelphieBonk()
+        {
+            Console.WriteLine("2F Field");
+            Choices.AddQueue(Choices.SelphieGarden1);
+            Choices.AddQueue(Choices.SelphieGarden2);
+            GameInput.HoldDown();
+            Thread.Sleep(1533); // Wait until screen is changed for sure
+            // -1277
+            while (Memory.GetFieldX() < -1277)
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.HoldLeft();
+            Console.WriteLine("Change direction");
+            while (Memory.CanMove())
+            {
+                Thread.Sleep(33);
+            }
+
+            GameInput.ReleaseDown();
+            GameInput.ReleaseLeft();
+            Console.WriteLine("Entered the trigger");
+            // 2 Options
+
+            while (!Memory.CanMove())
+            {
+                Thread.Sleep(33);
+            }
+            Console.WriteLine("Leaving");
+
+            GameInput.HoldDown();
+            GameInput.HoldRight();
+            
+
+            while (Memory.GetFieldX() < 280)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseDown();
+
+            while (Memory.GetFieldID() != 137)
+            {
+                Thread.Sleep(33);
+            }
+
+            GameInput.ReleaseRight();
+        }
+        private void TakeCardsUseLift()
+        {
+            GameInput.HoldRight();
+            GameInput.HoldDown();
+            Thread.Sleep(1500); // Bad
+            Console.WriteLine("Taking Cards");
+            while (Memory.GetFieldX() <= 150)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseDown();
+
+            while (Memory.GetFieldY() <= -3677)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseRight();
+            GameInput.PressX();
+
+            while (!Memory.CanMove())
+            {
+                Thread.Sleep(33);
+            }
+            GameInput.HoldRight();
+
+
+            while (Memory.CanMove())
+            {
+                Thread.Sleep(33);
+            }
+            GameInput.ReleaseRight();
+        }
+
+        private void ElevatorMainHall()
+        {
+            Console.WriteLine("Going down");
+            GameInput.HoldDown();
+
+            while (Memory.GetFieldID() != 165)
+            {
+                Thread.Sleep(33);
+            }
+
+            GameInput.HoldLeft();
+
+            while (Memory.GetFieldX() >= -437)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseLeft();
+
+            while (Memory.GetFieldY() >= -7404)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseDown();
+            GameInput.HoldRight();
+
+            Console.WriteLine("Hold Right");
+            while (Memory.GetFieldX() <= -92)
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.ReleaseRight();
+            GameInput.HoldUp();
+            GameInput.PressX();
+            GameInput.ReleaseUp();
+            Console.WriteLine("Board activated");
+            GameInput.HoldUp();
+            GameInput.HoldX();
+
+            while (Memory.GetFieldID() != 159)
+            {
+                Thread.Sleep(33);
+            }
+            Console.WriteLine("Teleported to Gates");
+
+            GameInput.ReleaseX();
+            GameInput.ReleaseUp();
+        }
+
+        private void GatesTakeGFs()
+        {
+            GameInput.HoldDown();
+            Thread.Sleep(1500);
+            while (Memory.CanMove())
+            {
+                Thread.Sleep(33);
+            }
+
+            Console.WriteLine("Entered the trigger");
+
+            while (!Memory.IsGFMenu())
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.ReleaseDown();
+            Console.WriteLine("Quetzacotl");
+            GameInput.ChangeFps(GameInput.State.Menu);
+            Thread.Sleep(380); // Need to change it to check for value instead of delay
+
+            GameInput.PressStart();
+            GameInput.PressX();
+
+            while (Memory.IsGFMenu())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            while (!Memory.IsGFMenu())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            Console.WriteLine("Shiva");
+            Thread.Sleep(380); // Need to change it to check for value instead of delay
+            GameInput.PressStart();
+            GameInput.PressX();
+            GameInput.ChangeFps(GameInput.State.Field);
+            while (Memory.IsGFMenu())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            Console.WriteLine("Waiting for tutorial");
+
+            while (!Memory.IsGFMenu())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.HoldTriangle();
+
+            while (Memory.IsGFMenu())
+            {
+                Thread.Sleep(pollTime);
+            }
+            Console.WriteLine("Triangle released");
+            GameInput.ReleaseTriangle();
+
+            GameInput.HoldDown();
+
+
+        }
         public void BalambGarden()
         {
             Console.WriteLine("Starting game");
-            // GameInput.PressX();
+            GameInput.PressX();
             Console.WriteLine("FMV time");
             GameInput.ChangeFps(GameInput.State.Field);
-            Thread clearTextThread0 = new Thread(() => ClearText(0));
-            Thread clearTextThread1 = new Thread(() => ClearText(1));
+            Thread clearTextThread0 = new Thread(() => HandleTextboxes(0));
+            Thread clearTextThread1 = new Thread(() => HandleTextboxes(1));
             clearTextThread0.Start();
-            // Infirmary();
-            // NameMenu();
+            Infirmary();
+            NameMenu();
 
-            // GameInput.ChangeFps(GameInput.State.Field);
-            // Infirmary2();
+            GameInput.ChangeFps(GameInput.State.Field);
+            Infirmary2();
             clearTextThread1.Start();
-            // Corridor();
+            Corridor();
             ClassRoom();
-        }
-        enum Buttons
-        {
-            Up = WindowsInput.Native.VirtualKeyCode.VK_W
+            SelphieBonk();
+            TakeCardsUseLift();
+            ElevatorMainHall();
+            GatesTakeGFs();
         }
 
         public void FireCavern()

@@ -137,7 +137,25 @@ namespace FF8TAS
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
+
+        static public byte GetOptionChoice()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x192B35B);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        static public bool IsGFMenu()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x18E4A68);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            if (value == 1)
+                return true;
+            else
+                return false;
+        }
         // 156ED16
         // 18E4906
+        // 18E4A68
     }
 }

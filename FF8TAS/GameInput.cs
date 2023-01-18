@@ -24,7 +24,7 @@ namespace FF8TAS
         {
             Battle = 15,
             Field = 30,
-            Menu = 60
+            Menu = 59
         }
 
         public enum Entity
@@ -115,6 +115,22 @@ namespace FF8TAS
             WaitOneFrame();
         }
 
+        static public void PressDown()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_S);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_S);
+            WaitOneFrame();
+        }
+
+        static public void PressUp()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_W);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_W);
+            WaitOneFrame();
+        }
+
         static public void HoldX()
         {
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_K);
@@ -123,6 +139,24 @@ namespace FF8TAS
         static public void ReleaseX()
         {
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
+        }
+
+        static public void PressTriangle()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_I);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_I);
+            WaitOneFrame();
+        }
+
+        static public void HoldTriangle()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_I);
+        }
+
+        static public void ReleaseTriangle()
+        {
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_I);
         }
 
         static public void WaitOneFrame()
