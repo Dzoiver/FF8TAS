@@ -13,12 +13,13 @@ using WindowsInput;
 
 namespace FF8TAS
 {
-    class Player
+    class Memory
     {
         public Process ff8Process;
         static private MemoryHelper64 helper;
 
         private int textBox;
+        public static int LastTextStatus;
 
         [DllImport("User32.dll")]
 
@@ -26,7 +27,7 @@ namespace FF8TAS
         public Process FindProcess()
         {
             Process[] ps = Process.GetProcessesByName("FF8_EN");
-            Console.WriteLine(ps.Length);
+            Console.WriteLine("Found " + ps.Length + " processes");
 
             ff8Process = ps.FirstOrDefault();
             return ff8Process;
@@ -35,14 +36,6 @@ namespace FF8TAS
         public void MemoryInit()
         {
             helper = new MemoryHelper64(ff8Process);
-            // 192B585
-            ulong targetAddress = helper.GetBaseAddress(0x1677238);
-            // int[] offsets = {  };
-            // ulong targetAddr = MemoryUtils.OffsetCalculator(helper, baseAddr, offsets);
-            string output = helper.ReadMemory<int>(targetAddress).ToString();
-            Console.WriteLine(output);
-            targetAddress = helper.GetBaseAddress(0x192B585);
-
         }
 
         public void SetFocus(Process process = null)
@@ -80,14 +73,11 @@ namespace FF8TAS
                 return false;
         }
 
-        static public bool IsField(int fieldId)
+        static public int GetFieldID()
         {
             ulong targetAddress = helper.GetBaseAddress(0x18D2FC0);
-            byte value = helper.ReadMemory<byte>(targetAddress);
-            if (value == fieldId)
-                return true;
-            else
-                return false;
+            int value = helper.ReadMemory<int>(targetAddress);
+            return value;
         }
 
         static public bool CanMove()
@@ -112,29 +102,42 @@ namespace FF8TAS
             int value = helper.ReadMemory<int>(targetAddress);
             return value;
         }
-        static public int GetBGDraw()
+        static public byte GetBGDraw()
         {
             ulong targetAddress = helper.GetBaseAddress(0x18E4906);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
 
-        static public int GetTextID()
+        static public byte GetTextID()
         {
             ulong targetAddress = helper.GetBaseAddress(0x148C8C8);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
 
-        static public bool CanSkipText()
+        // 0 nothing
+        // 1 printing
+        // 13 choice
+        // 7 clearable
+        // 10 next page
+        static public byte GetTextStatus(int id = 0)
         {
-            ulong targetAddress = helper.GetBaseAddress(0x148C8C8);
+            ulong address = 0x192B354;
+            if (id == 1)
+                address = 0x192B390;
+            ulong targetAddress = helper.GetBaseAddress(address);
             byte value = helper.ReadMemory<byte>(targetAddress);
-            if (value == 7)
-                return true;
-            else
-                return false;
+            LastTextStatus = value;
+            return value;
         }
+        static public byte GetSquallAnimID()
+        {
+            ulong targetAddress = helper.GetBaseAddress(0x156ED16);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        // 156ED16
         // 18E4906
     }
 }

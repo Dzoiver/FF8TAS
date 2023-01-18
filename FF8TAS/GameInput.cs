@@ -23,7 +23,7 @@ namespace FF8TAS
         public enum State
         {
             Battle = 15,
-            Field = 59,
+            Field = 30,
             Menu = 60
         }
 
@@ -45,16 +45,84 @@ namespace FF8TAS
         {
             if (entity == Entity.TextBox)
             {
-                while (Player.IsTextBox())
+                while (Memory.IsTextBox())
                     WaitOneFrame();
                 return;
             }
             if (entity == Entity.Menu)
             {
-                while (Player.IsMenu())
+                while (Memory.IsMenu())
                     WaitOneFrame();
                 return;
             }
+        }
+
+        static public void HoldDown()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_S);
+            Thread.Sleep(16);
+        }
+        static public void HoldLeft()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_A);
+            Thread.Sleep(16);
+        }
+        static public void HoldUp()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_W);
+            Thread.Sleep(16);
+        }
+        static public void HoldRight()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_D);
+            Thread.Sleep(16);
+        }
+
+        static public void ReleaseDown()
+        {
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_S);
+            Thread.Sleep(16);
+        }
+        static public void ReleaseLeft()
+        {
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_A);
+            Thread.Sleep(16);
+        }
+        static public void ReleaseUp()
+        {
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_W);
+            Thread.Sleep(16);
+        }
+        static public void ReleaseRight()
+        {
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_D);
+            Thread.Sleep(16);
+        }
+
+        static public void PressStart()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_H);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_H);
+            WaitOneFrame();
+        }
+
+        static public void PressX()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_K);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
+            WaitOneFrame();
+        }
+
+        static public void HoldX()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_K);
+        }
+
+        static public void ReleaseX()
+        {
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
         }
 
         static public void WaitOneFrame()

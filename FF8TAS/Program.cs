@@ -8,7 +8,7 @@ namespace FF8TAS
         {
             Console.WriteLine("FF8 TAS ready to start!");
 
-            Player player = new Player();
+            Memory player = new Memory();
             ECM ecm = new ECM();
 
             player.FindProcess();
