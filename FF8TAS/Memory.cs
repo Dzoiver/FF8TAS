@@ -78,8 +78,125 @@ namespace FF8TAS
         public static ulong CanMove_Address;
         public static ulong TextID_Address;
         public static ulong IsField_Address;
-        public static ulong MenuCursorStatus_Address;
 
+        public static ulong MenuCursorStatus_Address;
+        public static ulong JunctionScroll_Address;
+        public static ulong ItemFade_Address;
+        public static ulong JunctionFade_Address;
+
+        public static ulong AbilityPosition_Address;
+        public static ulong CharacterScrollJ_Address;
+
+        public static ulong MainCursorPos_Address;
+        public static ulong ConfigCursorPos_Address;
+        public static ulong MainOuterFade_Address;
+        public static ulong ConfigFade_Address;
+
+        public static ulong GF_Fade_Address;
+        public static ulong GF_CursorPosition_Address;
+        public static ulong GF_AbilityScroll_Address;
+        public static ulong GF_SelectedScroll_Address;
+        public static ulong GF_LearnScroll_Address;
+        public static ulong GF_AbilityPos1_Address;
+        public static ulong GF_AbilityPos2_Address;
+
+        static public short GetGF_AbilityPos2()
+        {
+            ulong targetAddress = helper.GetBaseAddress(GF_AbilityPos2_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetGF_AbilityPos1()
+        {
+            ulong targetAddress = helper.GetBaseAddress(GF_AbilityPos1_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetGF_LearnScroll()
+        {
+            ulong targetAddress = helper.GetBaseAddress(GF_LearnScroll_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetGF_SelectedScroll()
+        {
+            ulong targetAddress = helper.GetBaseAddress(GF_SelectedScroll_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetGF_AbilityScroll()
+        {
+            ulong targetAddress = helper.GetBaseAddress(GF_AbilityScroll_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetGF_CursorPosition()
+        {
+            ulong targetAddress = helper.GetBaseAddress(GF_CursorPosition_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetGF_Fade()
+        {
+            ulong targetAddress = helper.GetBaseAddress(GF_Fade_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetConfigFade()
+        {
+            ulong targetAddress = helper.GetBaseAddress(ConfigFade_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetMainOuterFade()
+        {
+            ulong targetAddress = helper.GetBaseAddress(MainOuterFade_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetConfigCursorPos()
+        {
+            ulong targetAddress = helper.GetBaseAddress(ConfigCursorPos_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        static public short GetMainCursorPos()
+        {
+            ulong targetAddress = helper.GetBaseAddress(MainCursorPos_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetCharacterScrollJ()
+        {
+            ulong targetAddress = helper.GetBaseAddress(CharacterScrollJ_Address);
+            short value = helper.ReadMemory<short>(targetAddress);
+            return value;
+        }
+        static public byte GetAbilityPosition()
+        {
+            ulong targetAddress = helper.GetBaseAddress(AbilityPosition_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public byte GetJunctionFade()
+        {
+            ulong targetAddress = helper.GetBaseAddress(JunctionFade_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public byte GetItemFade()
+        {
+            ulong targetAddress = helper.GetBaseAddress(ItemFade_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public byte GetJunctionScroll()
+        {
+            ulong targetAddress = helper.GetBaseAddress(JunctionScroll_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
         static public byte GetMenuCursorStatus()
         {
             ulong targetAddress = helper.GetBaseAddress(MenuCursorStatus_Address);

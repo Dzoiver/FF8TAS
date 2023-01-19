@@ -115,6 +115,22 @@ namespace FF8TAS
             WaitOneFrame();
         }
 
+        static public void PressRight()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_D);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_D);
+            WaitOneFrame();
+        }
+        
+        static public void PressLeft()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_A);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_A);
+            WaitOneFrame();
+        }
+
         static public void PressDown()
         {
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_S);
@@ -154,6 +170,14 @@ namespace FF8TAS
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_L);
             WaitOneFrame();
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_L);
+            WaitOneFrame();
+        }
+
+        static public void PressR1()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_E);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_E);
             WaitOneFrame();
         }
 
