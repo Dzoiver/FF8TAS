@@ -149,6 +149,14 @@ namespace FF8TAS
             WaitOneFrame();
         }
 
+        static public void PressCircle()
+        {
+            isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_L);
+            WaitOneFrame();
+            isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_L);
+            WaitOneFrame();
+        }
+
         static public void HoldTriangle()
         {
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_I);

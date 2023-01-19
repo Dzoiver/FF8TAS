@@ -13,32 +13,44 @@ using WindowsInput;
 
 namespace FF8TAS
 {
-    class Memory
+    static class Memory
     {
-        public Process ff8Process;
+        static private Process ff8Process;
         static private MemoryHelper64 helper;
-
-        private int textBox;
         public static int LastTextStatus;
 
         [DllImport("User32.dll")]
 
         static extern int SetForegroundWindow(IntPtr point);
-        public Process FindProcess()
+        static public Process FindProcess()
         {
             Process[] ps = Process.GetProcessesByName("FF8_EN");
-            Console.WriteLine("Found " + ps.Length + " processes");
+            Console.WriteLine("English version found");
+            if (ps.Length > 0)
+            {
+                ff8Process = ps.FirstOrDefault();
+                Language language = new Language("EN");
+                return ff8Process;
+            }
 
-            ff8Process = ps.FirstOrDefault();
-            return ff8Process;
+            ps = Process.GetProcessesByName("FF8_FR");
+            if (ps.Length > 0)
+            {
+                Console.WriteLine("French version found");
+                ff8Process = ps.FirstOrDefault();
+                Language language = new Language("FR");
+                return ff8Process;
+            }
+
+            return null;
         }
 
-        public void MemoryInit()
+        static public void MemoryInit()
         {
             helper = new MemoryHelper64(ff8Process);
         }
 
-        public void SetFocus(Process process = null)
+        static public void SetFocus(Process process = null)
         {
             if (process == null)
                 process = ff8Process;
@@ -47,15 +59,37 @@ namespace FF8TAS
             SetForegroundWindow(h);
         }
 
-        public void StartRun(IRoute route)
+        static public void StartRun(IRoute route)
         {
             //route.ValveCheck();
             route.BalambGarden();
         }
 
+        public static ulong FieldX_Address;
+        public static ulong FieldY_Address;
+        public static ulong BGDraw_Address;
+        public static ulong TextStatus_Address;
+        public static ulong SquallAnim_Address;
+        public static ulong OptionChoice_Address;
+        public static ulong IsGFMenu_Address;
+        public static ulong TextBox_Address;
+        public static ulong IsMenu_Address;
+        public static ulong FieldID_Address;
+        public static ulong CanMove_Address;
+        public static ulong TextID_Address;
+        public static ulong IsField_Address;
+        public static ulong MenuCursorStatus_Address;
+
+        static public byte GetMenuCursorStatus()
+        {
+            ulong targetAddress = helper.GetBaseAddress(MenuCursorStatus_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
         static public bool IsTextBox()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x192B585);
+            ulong targetAddress = helper.GetBaseAddress(TextBox_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             if (value == 1)
                 return true;
@@ -65,7 +99,7 @@ namespace FF8TAS
 
         static public bool IsMenu()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x18E490B);
+            ulong targetAddress = helper.GetBaseAddress(IsMenu_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             if (value == 1)
                 return true;
@@ -75,14 +109,14 @@ namespace FF8TAS
 
         static public int GetFieldID()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x18D2FC0);
+            ulong targetAddress = helper.GetBaseAddress(FieldID_Address);
             int value = helper.ReadMemory<int>(targetAddress);
             return value;
         }
 
         static public bool CanMove()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x199D018);
+            ulong targetAddress = helper.GetBaseAddress(CanMove_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             if (value == 0)
                 return true;
@@ -92,26 +126,26 @@ namespace FF8TAS
 
         static public int GetFieldX()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x1677238);
+            ulong targetAddress = helper.GetBaseAddress(FieldX_Address);
             int value = helper.ReadMemory<int>(targetAddress);
             return value;
         }
         static public int GetFieldY()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x167723C);
+            ulong targetAddress = helper.GetBaseAddress(FieldY_Address);
             int value = helper.ReadMemory<int>(targetAddress);
             return value;
         }
         static public byte GetBGDraw()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x18E4906);
+            ulong targetAddress = helper.GetBaseAddress(BGDraw_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
 
         static public byte GetTextID()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x148C8C8);
+            ulong targetAddress = helper.GetBaseAddress(TextID_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
@@ -123,9 +157,9 @@ namespace FF8TAS
         // 10 next page
         static public byte GetTextStatus(int id = 0)
         {
-            ulong address = 0x192B354;
+            ulong address = TextStatus_Address;
             if (id == 1)
-                address = 0x192B390;
+                address = address + 0x3C * (ulong)id; // + 3C
             ulong targetAddress = helper.GetBaseAddress(address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             LastTextStatus = value;
@@ -133,21 +167,31 @@ namespace FF8TAS
         }
         static public byte GetSquallAnimID()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x156ED16);
+            ulong targetAddress = helper.GetBaseAddress(SquallAnim_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
 
         static public byte GetOptionChoice()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x192B35B);
+            ulong targetAddress = helper.GetBaseAddress(OptionChoice_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
 
         static public bool IsGFMenu()
         {
-            ulong targetAddress = helper.GetBaseAddress(0x18E4A68);
+            ulong targetAddress = helper.GetBaseAddress(IsGFMenu_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            if (value == 1)
+                return true;
+            else
+                return false;
+        }
+
+        static public bool IsField()
+        {
+            ulong targetAddress = helper.GetBaseAddress(IsField_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             if (value == 1)
                 return true;

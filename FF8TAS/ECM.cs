@@ -383,7 +383,65 @@ namespace FF8TAS
 
             GameInput.HoldDown();
 
+            while (!Memory.CanMove())
+            {
+                Thread.Sleep(33);
+            }
 
+            FirstMenu();
+
+            GameInput.HoldDown();
+
+            while (Memory.IsField())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseDown();
+        }
+
+        private void FirstMenu()
+        {
+            Console.WriteLine("Starting menu");
+
+            GameInput.PressCircle();
+
+            while (Memory.GetMenuCursorStatus() == 0)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseDown();
+
+            GameInput.ChangeFps(GameInput.State.Menu);
+
+            while (Memory.GetMenuCursorStatus() != 3)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            // Ready to navigate
+            Console.WriteLine("Cursor ready");
+            GameInput.PressX();
+
+            while (Memory.GetMenuCursorStatus() != 10)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.PressX();
+            Console.WriteLine("Press X");
+
+            while (Memory.GetMenuCursorStatus() != 7)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.PressX();
+
+            GameInput.ChangeFps(GameInput.State.Field);
+            Console.WriteLine("Finished menu");
+            // Left the menu
         }
         public void BalambGarden()
         {
@@ -394,23 +452,28 @@ namespace FF8TAS
             Thread clearTextThread0 = new Thread(() => HandleTextboxes(0));
             Thread clearTextThread1 = new Thread(() => HandleTextboxes(1));
             clearTextThread0.Start();
-            Infirmary();
-            NameMenu();
+            //Infirmary();
+            //NameMenu();
 
-            GameInput.ChangeFps(GameInput.State.Field);
-            Infirmary2();
-            clearTextThread1.Start();
-            Corridor();
-            ClassRoom();
-            SelphieBonk();
-            TakeCardsUseLift();
-            ElevatorMainHall();
+            //GameInput.ChangeFps(GameInput.State.Field);
+            //Infirmary2();
+            //clearTextThread1.Start();
+            //Corridor();
+            //ClassRoom();
+            //SelphieBonk();
+            //TakeCardsUseLift();
+            //ElevatorMainHall();
             GatesTakeGFs();
+        }
+
+        public void TravelToCavern()
+        {
+
         }
 
         public void FireCavern()
         {
-
+            TravelToCavern();
         }
     }
 }
