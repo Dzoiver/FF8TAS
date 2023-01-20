@@ -107,12 +107,12 @@ namespace FF8TAS
             WaitOneFrame();
         }
 
-        static public void PressX()
+        static public void PressX(int wait = 0)
         {
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_K);
-            WaitOneFrame();
+            WaitOneFrame(wait);
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
-            WaitOneFrame();
+            WaitOneFrame(wait);
         }
 
         static public void PressRight()
@@ -131,20 +131,20 @@ namespace FF8TAS
             WaitOneFrame();
         }
 
-        static public void PressDown()
+        static public void PressDown(int wait = 0)
         {
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_S);
-            WaitOneFrame();
+            WaitOneFrame(wait);
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_S);
-            WaitOneFrame();
+            WaitOneFrame(wait);
         }
 
-        static public void PressUp()
+        static public void PressUp(int wait = 0)
         {
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_W);
-            WaitOneFrame();
+            WaitOneFrame(wait);
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_W);
-            WaitOneFrame();
+            WaitOneFrame(wait);
         }
 
         static public void HoldX()
@@ -157,12 +157,12 @@ namespace FF8TAS
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_K);
         }
 
-        static public void PressTriangle()
+        static public void PressTriangle(int wait = 0)
         {
             isim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_I);
-            WaitOneFrame();
+            WaitOneFrame(wait);
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_I);
-            WaitOneFrame();
+            WaitOneFrame(wait);
         }
 
         static public void PressCircle()
@@ -191,8 +191,13 @@ namespace FF8TAS
             isim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_I);
         }
 
-        static public void WaitOneFrame()
+        static public void WaitOneFrame(int wait = 0)
         {
+            if (wait != 0)
+            {
+                Thread.Sleep(wait);
+                return;
+            }
             float time = 1 / (float)fps * 1000;
             Thread.Sleep((int)Math.Round(time));
         }

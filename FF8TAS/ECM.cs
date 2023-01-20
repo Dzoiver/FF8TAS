@@ -456,10 +456,10 @@ namespace FF8TAS
 
             Console.WriteLine("Selecting GF");
             GameInput.PressDown();
-            GameInput.PressX();
+            GameInput.PressX(9);
             Console.WriteLine("Shiva");
-
             GameInput.PressTriangle();
+
             while (Memory.GetItemFade() != 0)
             {
                 Thread.Sleep(pollTime);
@@ -472,33 +472,34 @@ namespace FF8TAS
                 Thread.Sleep(pollTime);
             }
             Console.WriteLine("Magic - Draw - Item");
-            GameInput.PressX(); // Enter submenu
+            GameInput.PressX(16); // Enter submenu
             //Thread.Sleep(2500);
-            GameInput.PressX(); // Magic
+            GameInput.PressX(16); // Magic
             //Thread.Sleep(2500);
             Console.WriteLine("Magic");
-            GameInput.PressDown();
+            GameInput.PressDown(16);
             //Thread.Sleep(2500);
-            GameInput.PressX();
+            GameInput.PressX(16);
             while (Memory.GetAbilityPosition() != 2)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
-            GameInput.PressX(); // Draw
-            GameInput.PressDown();
-            GameInput.PressX();
+            Console.WriteLine("Draw");
+            GameInput.PressX(9); // Draw
+            GameInput.PressDown(16);
+            GameInput.PressX(16);
             while (Memory.GetAbilityPosition() != 3)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(8);
             }
-            GameInput.PressX();
-            GameInput.PressTriangle();
+            GameInput.PressX(9);
+            GameInput.PressTriangle(9);
 
             while (Memory.GetJunctionScroll() != 0)
             {
                 Thread.Sleep(pollTime);
             }
-            GameInput.PressTriangle();
+            GameInput.PressTriangle(9);
 
             while (Memory.GetItemFade() != 0)
             {
@@ -532,10 +533,10 @@ namespace FF8TAS
             }
 
             Console.WriteLine("Selecting GF");
-            GameInput.PressX();
+            GameInput.PressX(9);
             Console.WriteLine("Quetz");
 
-            GameInput.PressTriangle();
+            GameInput.PressTriangle(9);
             while (Memory.GetItemFade() != 0)
             {
                 Thread.Sleep(pollTime);
@@ -548,24 +549,24 @@ namespace FF8TAS
                 Thread.Sleep(pollTime);
             }
             Console.WriteLine("Magic - Draw - Item");
-            GameInput.PressX(); // Enter submenu
+            GameInput.PressX(9); // Enter submenu
             //Thread.Sleep(2500);
-            GameInput.PressX(); // Magic
+            GameInput.PressX(16); // Magic
             //Thread.Sleep(2500);
             Console.WriteLine("Magic");
-            GameInput.PressDown();
+            GameInput.PressDown(16);
             //Thread.Sleep(2500);
-            GameInput.PressX();
+            GameInput.PressX(16);
             while (Memory.GetAbilityPosition() != 2)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
             GameInput.PressX(); // Draw
             GameInput.PressDown();
             GameInput.PressX();
             while (Memory.GetAbilityPosition() != 3)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
             GameInput.PressX();
             GameInput.PressTriangle();
@@ -586,7 +587,7 @@ namespace FF8TAS
 
             while (Memory.GetMainCursorPos() != 8)
             {
-                GameInput.PressUp();
+                GameInput.PressUp(9);
             }
             Console.WriteLine("Config menu");
             GameInput.PressX();
@@ -597,14 +598,14 @@ namespace FF8TAS
 
             while (Memory.GetConfigCursorPos() != 1)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
 
             GameInput.PressRight();
 
             while (Memory.GetConfigCursorPos() != 4)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
 
             Console.WriteLine("Camera movement to 0");
@@ -612,13 +613,13 @@ namespace FF8TAS
             GameInput.PressLeft();
             while (Memory.GetConfigCursorPos() != 5)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
             GameInput.PressRight();
             GameInput.PressRight();
             while (Memory.GetConfigCursorPos() != 6)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
             GameInput.PressRight();
             GameInput.PressRight();
@@ -627,7 +628,7 @@ namespace FF8TAS
 
             while (Memory.GetMainCursorPos() != 4)
             {
-                GameInput.PressUp();
+                GameInput.PressUp(9);
             }
 
             GameInput.PressX();
@@ -658,7 +659,7 @@ namespace FF8TAS
 
             while (Memory.GetGF_AbilityPos1() != 7)
             {
-                GameInput.PressUp();
+                GameInput.PressUp(9);
             }
 
             GameInput.PressX();
@@ -694,7 +695,7 @@ namespace FF8TAS
 
             while (Memory.GetGF_AbilityPos2() != 0)
             {
-                GameInput.PressDown();
+                GameInput.PressDown(9);
             }
 
             GameInput.PressX();
@@ -717,9 +718,9 @@ namespace FF8TAS
 
             while (Memory.GetMainOuterFade() != 16)
             {
-                Thread.Sleep(pollTime);
+                Thread.Sleep(17);
             }
-
+            // Stopped here once
             GameInput.PressTriangle();
 
             GameInput.ChangeFps(GameInput.State.Field);
