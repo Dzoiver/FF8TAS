@@ -388,6 +388,17 @@ namespace FF8TAS
                 Thread.Sleep(33);
             }
 
+            GameInput.PressCircle();
+            GameInput.ReleaseDown();
+            while (Memory.GetMenuCursorStatus() == 0)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            
+
+            GameInput.ChangeFps(GameInput.State.Menu);
+
             FirstMenu();
 
             GameInput.HoldDown();
@@ -402,43 +413,18 @@ namespace FF8TAS
 
         private void FirstMenu()
         {
+            if (Memory.GetMenuCursorStatus() == 0)
+            {
+                GameInput.PressCircle();
+            }
             Console.WriteLine("Starting menu");
+            Menu firstMenu = new Menu();
 
-            GameInput.PressCircle();
+            firstMenu.OpenMainSection(Menu.MainSection.Junction);
 
-            while (Memory.GetMenuCursorStatus() == 0)
-            {
-                Thread.Sleep(pollTime);
-            }
+            firstMenu.ChooseCharacter();
 
-            GameInput.ReleaseDown();
-
-            GameInput.ChangeFps(GameInput.State.Menu);
-
-            while (Memory.GetMenuCursorStatus() != 3)
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            // Ready to navigate
-            Console.WriteLine("Cursor ready");
-            GameInput.PressX();
-
-            while (Memory.GetMenuCursorStatus() != 10)
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            GameInput.PressX();
-            Console.WriteLine("Press X");
-
-            while (Memory.GetJunctionFade() != 16)
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            Console.WriteLine("Junction menu");
-            GameInput.PressX();
+            firstMenu.Junction_Section(Menu.JunctionSection.Junction);
 
             while (Memory.GetJunctionScroll() != 16)
             {
@@ -456,7 +442,7 @@ namespace FF8TAS
 
             Console.WriteLine("Selecting GF");
             GameInput.PressDown();
-            GameInput.PressX(9);
+            GameInput.PressX();
             Console.WriteLine("Shiva");
             GameInput.PressTriangle();
 
@@ -471,28 +457,11 @@ namespace FF8TAS
             {
                 Thread.Sleep(pollTime);
             }
-            Console.WriteLine("Magic - Draw - Item");
-            GameInput.PressX(16); // Enter submenu
-            //Thread.Sleep(2500);
-            GameInput.PressX(16); // Magic
-            //Thread.Sleep(2500);
-            Console.WriteLine("Magic");
+            firstMenu.JunctionAbility(Menu.CharacterAbility.Magic);
             GameInput.PressDown(16);
-            //Thread.Sleep(2500);
-            GameInput.PressX(16);
-            while (Memory.GetAbilityPosition() != 2)
-            {
-                GameInput.PressDown(9);
-            }
-            Console.WriteLine("Draw");
-            GameInput.PressX(9); // Draw
+            firstMenu.JunctionAbility(Menu.CharacterAbility.Draw);
             GameInput.PressDown(16);
-            GameInput.PressX(16);
-            while (Memory.GetAbilityPosition() != 3)
-            {
-                GameInput.PressDown(8);
-            }
-            GameInput.PressX(9);
+            firstMenu.JunctionAbility(Menu.CharacterAbility.Item);
             GameInput.PressTriangle(9);
 
             while (Memory.GetJunctionScroll() != 0)
@@ -516,6 +485,7 @@ namespace FF8TAS
             {
                 Thread.Sleep(pollTime);
             }
+            // 
             Console.WriteLine("GF - Magic");
             GameInput.PressX();
             // GF
@@ -533,10 +503,10 @@ namespace FF8TAS
             }
 
             Console.WriteLine("Selecting GF");
-            GameInput.PressX(9);
+            GameInput.PressX(16);
             Console.WriteLine("Quetz");
 
-            GameInput.PressTriangle(9);
+            GameInput.PressTriangle(16);
             while (Memory.GetItemFade() != 0)
             {
                 Thread.Sleep(pollTime);
@@ -548,28 +518,12 @@ namespace FF8TAS
             {
                 Thread.Sleep(pollTime);
             }
-            Console.WriteLine("Magic - Draw - Item");
-            GameInput.PressX(9); // Enter submenu
-            //Thread.Sleep(2500);
-            GameInput.PressX(16); // Magic
-            //Thread.Sleep(2500);
-            Console.WriteLine("Magic");
+            firstMenu.JunctionAbility(Menu.CharacterAbility.Magic);
             GameInput.PressDown(16);
-            //Thread.Sleep(2500);
-            GameInput.PressX(16);
-            while (Memory.GetAbilityPosition() != 2)
-            {
-                GameInput.PressDown(9);
-            }
-            GameInput.PressX(); // Draw
-            GameInput.PressDown();
-            GameInput.PressX();
-            while (Memory.GetAbilityPosition() != 3)
-            {
-                GameInput.PressDown(9);
-            }
-            GameInput.PressX();
-            GameInput.PressTriangle();
+            firstMenu.JunctionAbility(Menu.CharacterAbility.Draw);
+            GameInput.PressDown(16);
+            firstMenu.JunctionAbility(Menu.CharacterAbility.Item);
+            GameInput.PressTriangle(9);
 
             Console.WriteLine("Squall done");
             while (Memory.GetItemFade() != 0)
@@ -580,17 +534,8 @@ namespace FF8TAS
             GameInput.PressTriangle();
 
             Console.WriteLine("Main menu");
-            while (Memory.GetMenuCursorStatus() != 3)
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            while (Memory.GetMainCursorPos() != 8)
-            {
-                GameInput.PressUp(9);
-            }
+            firstMenu.OpenMainSection(Menu.MainSection.Config);
             Console.WriteLine("Config menu");
-            GameInput.PressX();
             while (Memory.GetConfigFade() != 16)
             {
                 Thread.Sleep(pollTime);
@@ -626,12 +571,7 @@ namespace FF8TAS
             Console.WriteLine("Config Done");
             GameInput.PressTriangle();
 
-            while (Memory.GetMainCursorPos() != 4)
-            {
-                GameInput.PressUp(9);
-            }
-
-            GameInput.PressX();
+            firstMenu.OpenMainSection(Menu.MainSection.GF);
 
             // Entering the GF menu
 
@@ -650,62 +590,17 @@ namespace FF8TAS
             }
 
             Console.WriteLine("Learn");
-            GameInput.PressX();
+            firstMenu.GFLearnAbility(7, 0, false);
 
-            while (Memory.GetGF_LearnScroll() != 16)
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            while (Memory.GetGF_AbilityPos1() != 7)
-            {
-                GameInput.PressUp(9);
-            }
-
-            GameInput.PressX();
-            GameInput.PressTriangle();
-            while (Memory.GetGF_LearnScroll() != 0)
-            {
-                Thread.Sleep(pollTime);
-            }
-            GameInput.PressR1();
+            GameInput.PressR1(); // Go to Shiva
 
             while (Memory.GetGF_SelectedScroll() != 0)
             {
                 Thread.Sleep(pollTime);
             }
+            // Stopped here
             Console.WriteLine("Shiva");
-            GameInput.PressX();
-
-            while (Memory.GetGF_Fade() != 16)
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            Console.WriteLine("Learn");
-            GameInput.PressX();
-
-            while (Memory.GetGF_LearnScroll() != 16)
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            // Change page and go to 0 pos
-            GameInput.PressRight();
-
-            while (Memory.GetGF_AbilityPos2() != 0)
-            {
-                GameInput.PressDown(9);
-            }
-
-            GameInput.PressX();
-
-            GameInput.PressTriangle();
-
-            while (Memory.GetGF_LearnScroll() != 0)
-            {
-                Thread.Sleep(pollTime);
-            }
+            firstMenu.GFLearnAbility(0, 1, true);
 
             GameInput.PressTriangle();
 
@@ -718,7 +613,7 @@ namespace FF8TAS
 
             while (Memory.GetMainOuterFade() != 16)
             {
-                Thread.Sleep(17);
+                Thread.Sleep(19);
             }
             // Stopped here once
             GameInput.PressTriangle();
