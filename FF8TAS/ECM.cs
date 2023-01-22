@@ -403,11 +403,12 @@ namespace FF8TAS
 
             GameInput.HoldDown();
 
-            while (Memory.IsField())
+            while (!Memory.IsWM())
             {
                 Thread.Sleep(pollTime);
+                Console.WriteLine(Memory.IsWM());
             }
-
+            Console.WriteLine("Hello WM");
             GameInput.ReleaseDown();
         }
 
@@ -519,11 +520,11 @@ namespace FF8TAS
                 Thread.Sleep(pollTime);
             }
             firstMenu.JunctionAbility(Menu.CharacterAbility.Magic);
-            GameInput.PressDown(16);
+            GameInput.PressDown();
             firstMenu.JunctionAbility(Menu.CharacterAbility.Draw);
-            GameInput.PressDown(16);
+            GameInput.PressDown();
             firstMenu.JunctionAbility(Menu.CharacterAbility.Item);
-            GameInput.PressTriangle(9);
+            GameInput.PressTriangle();
 
             Console.WriteLine("Squall done");
             while (Memory.GetItemFade() != 0)
@@ -580,7 +581,7 @@ namespace FF8TAS
                 Thread.Sleep(pollTime);
             }
 
-            Console.WriteLine("Quezacotl");
+            Console.WriteLine("Quezacotl ability selection");
 
             GameInput.PressX();
 
@@ -594,12 +595,12 @@ namespace FF8TAS
 
             GameInput.PressR1(); // Go to Shiva
 
-            while (Memory.GetGF_SelectedScroll() != 0)
+            while (Memory.GetGF_SelectedScroll() != 0) // The variable is mb wrong
             {
                 Thread.Sleep(pollTime);
             }
-            // Stopped here
-            Console.WriteLine("Shiva");
+            Thread.Sleep(16); // Without it, it stops
+            Console.WriteLine("Shiva ability selection");
             firstMenu.GFLearnAbility(0, 1, true);
 
             GameInput.PressTriangle();
@@ -613,9 +614,10 @@ namespace FF8TAS
 
             while (Memory.GetMainOuterFade() != 16)
             {
-                Thread.Sleep(19);
+                Thread.Sleep(pollTime);
             }
             // Stopped here once
+            Thread.Sleep(200);
             GameInput.PressTriangle();
 
             GameInput.ChangeFps(GameInput.State.Field);
@@ -642,17 +644,69 @@ namespace FF8TAS
             //SelphieBonk();
             //TakeCardsUseLift();
             //ElevatorMainHall();
-            FirstMenu();
-            //GatesTakeGFs();
+
+            //while (true)
+            //{
+            //    Thread.Sleep(300);
+            //    Console.WriteLine(Memory.IsWM());
+            //}
+
+            GatesTakeGFs();
+            Console.WriteLine("Balamb Finished!");
         }
 
         public void TravelToCavern()
         {
+            Fight fight = new Fight();
+            GameInput.HoldL1();
+            Thread.Sleep(32);
+            GameInput.HoldRight();
+            Thread.Sleep(32);
+            GameInput.HoldSquare();
+            Console.WriteLine("WM started");
 
+            while (Memory.GetCameraDirection() > 25)
+            {
+                if (Memory.IsBattle())
+                {
+                    GameInput.ReleaseL1();
+                    GameInput.ReleaseSquare();
+                    GameInput.ReleaseRight();
+                    fight.RunFromRandomEncounter();
+                    GameInput.HoldL1();
+                    GameInput.HoldRight();
+                    GameInput.HoldSquare();
+                }
+                Thread.Sleep(pollTime);
+            }
+            GameInput.ReleaseL1();
+            Console.WriteLine("Released");
+            while (Memory.GetFieldID() != 136)
+            {
+                if (Memory.IsBattle())
+                {
+                    GameInput.ReleaseSquare();
+                    GameInput.ReleaseRight();
+                    fight.RunFromRandomEncounter();
+                    GameInput.HoldRight();
+                    GameInput.HoldSquare();
+                }
+                Thread.Sleep(pollTime);
+            }
+            Console.WriteLine("At cavern");
+            GameInput.ReleaseRight();
+            Thread.Sleep(32);
+            GameInput.ReleaseSquare();
         }
 
         public void FireCavern()
         {
+            //while (true)
+            //{
+            //    Thread.Sleep(300);
+            //    Console.WriteLine(Memory.IsWM());
+            //}
+            GameInput.ChangeFps(GameInput.State.Field);
             TravelToCavern();
         }
     }

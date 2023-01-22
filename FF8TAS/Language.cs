@@ -6,6 +6,7 @@ namespace FF8TAS
 {
     class Language
     {
+        public static ulong BaseAddress = 0x0;
         // English addresses
         private static ulong BaseAddressEN = 0x18fe9b8;
 
@@ -42,6 +43,8 @@ namespace FF8TAS
         private static ulong EN_GF_AbilityPos1 = 0x1976CF1;
         private static ulong EN_GF_AbilityPos2 = 0x1976CF2;
 
+        private static ulong EN_WMCameraTilt = 0x1C3ED08;
+
         // French addresses
         private static ulong BaseAddressFR = 0x1677238;
 
@@ -59,10 +62,12 @@ namespace FF8TAS
         {
             if (lang == "FR")
             {
+                BaseAddress = BaseAddressFR;
                 Memory.FieldX_Address = BaseAddressFR + EN_fieldX - BaseAddressEN;
             }
             if (lang == "EN")
             {
+                BaseAddress = BaseAddressEN;
                 Memory.FieldX_Address = EN_fieldX;
                 Memory.FieldY_Address = EN_fieldY;
                 Memory.BGDraw_Address = EN_BGDraw;
@@ -75,7 +80,7 @@ namespace FF8TAS
                 Memory.FieldID_Address = EN_FieldID;
                 Memory.CanMove_Address = EN_CanMove;
                 Memory.TextID_Address = EN_TextID;
-                Memory.IsField_Address = EN_IsField;
+                Memory.IsBattleOrField_Address = EN_IsField;
                 Memory.MenuCursorStatus_Address = EN_MenuCursorReady;
                 Memory.JunctionScroll_Address = EN_JunctionScroll;
                 Memory.ItemFade_Address = EN_ItemMenuFade;

@@ -62,7 +62,8 @@ namespace FF8TAS
         static public void StartRun(IRoute route)
         {
             //route.ValveCheck();
-            route.BalambGarden();
+            // route.BalambGarden();
+            route.FireCavern();
         }
 
         public static ulong FieldX_Address;
@@ -77,7 +78,7 @@ namespace FF8TAS
         public static ulong FieldID_Address;
         public static ulong CanMove_Address;
         public static ulong TextID_Address;
-        public static ulong IsField_Address;
+        public static ulong IsBattleOrField_Address;
 
         public static ulong MenuCursorStatus_Address;
         public static ulong JunctionScroll_Address;
@@ -100,68 +101,106 @@ namespace FF8TAS
         public static ulong GF_AbilityPos1_Address;
         public static ulong GF_AbilityPos2_Address;
 
-        static public short GetGF_AbilityPos2()
+        private static ulong WMCameraTilt_Address = 0x34034A; // 0x18fe9b8 - 1C3ED02 = 34034A
+        // here will be the relative address + memory base
+        private static ulong IsWM_Address = 0x1B71AD; //  0x174780B
+        private static ulong CameraDirection_Address = 0x34034A; // 0x1C3ED02 +
+        private static ulong BattleResult_Address = 0x285D14; // 1678CA4
+        private static ulong IsBattle_Address = 0x1362DD; //  17C86DB
+
+        static public bool IsBattle()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - IsBattle_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value == 1;
+        }
+        static public byte GetBattleResult()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - BattleResult_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        static public short GetCameraDirection()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + CameraDirection_Address);
+            short value = helper.ReadMemory<short>(targetAddress);
+            return value;
+        }
+        static public bool IsWM()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - IsWM_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value == 2;
+        }
+        static public byte GetWMCameraTilt()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + WMCameraTilt_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        static public byte GetGF_AbilityPos2()
         {
             ulong targetAddress = helper.GetBaseAddress(GF_AbilityPos2_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetGF_AbilityPos1()
+        static public byte GetGF_AbilityPos1()
         {
             ulong targetAddress = helper.GetBaseAddress(GF_AbilityPos1_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetGF_LearnScroll()
+        static public byte GetGF_LearnScroll()
         {
             ulong targetAddress = helper.GetBaseAddress(GF_LearnScroll_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetGF_SelectedScroll()
+        static public byte GetGF_SelectedScroll()
         {
             ulong targetAddress = helper.GetBaseAddress(GF_SelectedScroll_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetGF_AbilityScroll()
+        static public byte GetGF_AbilityScroll()
         {
             ulong targetAddress = helper.GetBaseAddress(GF_AbilityScroll_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetGF_CursorPosition()
+        static public byte GetGF_CursorPosition()
         {
             ulong targetAddress = helper.GetBaseAddress(GF_CursorPosition_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetGF_Fade()
+        static public byte GetGF_Fade()
         {
             ulong targetAddress = helper.GetBaseAddress(GF_Fade_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetConfigFade()
+        static public byte GetConfigFade()
         {
             ulong targetAddress = helper.GetBaseAddress(ConfigFade_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetMainOuterFade()
+        static public byte GetMainOuterFade()
         {
             ulong targetAddress = helper.GetBaseAddress(MainOuterFade_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
-        static public short GetConfigCursorPos()
+        static public byte GetConfigCursorPos()
         {
             ulong targetAddress = helper.GetBaseAddress(ConfigCursorPos_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
 
-        static public short GetMainCursorPos()
+        static public byte GetMainCursorPos()
         {
             ulong targetAddress = helper.GetBaseAddress(MainCursorPos_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
@@ -208,20 +247,14 @@ namespace FF8TAS
         {
             ulong targetAddress = helper.GetBaseAddress(TextBox_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
-            if (value == 1)
-                return true;
-            else
-                return false;
+            return value == 1;
         }
 
         static public bool IsMenu()
         {
             ulong targetAddress = helper.GetBaseAddress(IsMenu_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
-            if (value == 1)
-                return true;
-            else
-                return false;
+            return value == 1;
         }
 
         static public int GetFieldID()
@@ -235,10 +268,7 @@ namespace FF8TAS
         {
             ulong targetAddress = helper.GetBaseAddress(CanMove_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
-            if (value == 0)
-                return true;
-            else
-                return false;
+            return value == 0;
         }
 
         static public int GetFieldX()
@@ -306,9 +336,9 @@ namespace FF8TAS
                 return false;
         }
 
-        static public bool IsField()
+        static public bool IsBattleOrField()
         {
-            ulong targetAddress = helper.GetBaseAddress(IsField_Address);
+            ulong targetAddress = helper.GetBaseAddress(IsBattleOrField_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             if (value == 1)
                 return true;
