@@ -7,6 +7,7 @@ namespace FF8TAS
 {
     class Fight
     {
+        private bool isATBHeld = false;
         public void RunFromRandomEncounter()
         {
             Console.WriteLine("Battle started");
@@ -17,6 +18,7 @@ namespace FF8TAS
             GameInput.ChangeFps(GameInput.State.Menu);
             while (Memory.GetBattleResult() == 0)
             {
+                HoldATB();
                 GameInput.WaitOneFrame();
             }
 
@@ -29,6 +31,12 @@ namespace FF8TAS
                 GameInput.PressX();
             }
             Console.WriteLine("Battle end");
+        }
+
+        private void HoldATB()
+        {
+            if (isATBHeld)
+                return;
         }
     }
 }

@@ -59,13 +59,6 @@ namespace FF8TAS
             SetForegroundWindow(h);
         }
 
-        static public void StartRun(IRoute route)
-        {
-            //route.ValveCheck();
-            // route.BalambGarden();
-            route.FireCavern();
-        }
-
         public static ulong FieldX_Address;
         public static ulong FieldY_Address;
         public static ulong BGDraw_Address;
@@ -107,7 +100,14 @@ namespace FF8TAS
         private static ulong CameraDirection_Address = 0x34034A; // 0x1C3ED02 +
         private static ulong BattleResult_Address = 0x285D14; // 1678CA4
         private static ulong IsBattle_Address = 0x1362DD; //  17C86DB
+        private static ulong StoryProgress_Address = 0x100; // 18FEAB8 +
 
+        static public byte GetStoryProgress()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + StoryProgress_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
         static public bool IsBattle()
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - IsBattle_Address);

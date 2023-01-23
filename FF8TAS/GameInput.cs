@@ -81,12 +81,12 @@ namespace FF8TAS
         static public void HoldUp()
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Up);
-            Thread.Sleep(16);
+            WaitOneFrame();
         }
         static public void HoldRight()
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Right);
-            Thread.Sleep(16);
+            WaitOneFrame();
         }
 
         static public void ReleaseDown()
@@ -104,10 +104,10 @@ namespace FF8TAS
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Up);
             Thread.Sleep(16);
         }
-        static public void ReleaseRight()
+        static public void ReleaseRight(int wait = 0)
         {
-            isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Right);
-            Thread.Sleep(16);
+            isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Right);
+            WaitOneFrame(wait);
         }
 
         static public void PressStart()

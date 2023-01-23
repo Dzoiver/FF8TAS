@@ -125,10 +125,10 @@ namespace FF8TAS
         {
             Console.WriteLine("Class room field");
 
-            while (Memory.GetSquallAnimID() != 8)
-            {
-                Thread.Sleep(200);
-            }
+            //while (Memory.GetSquallAnimID() != 8)
+            //{
+            //    Thread.Sleep(200);
+            //}
 
             Console.WriteLine("Hold UR");
             GameInput.HoldUp();
@@ -140,7 +140,7 @@ namespace FF8TAS
                 Thread.Sleep(33);
             }
 
-            while (Memory.GetFieldX() < 1242)
+            while (Memory.GetFieldX() < 1245)
             {
                 Thread.Sleep(pollTime);
             }
@@ -159,13 +159,14 @@ namespace FF8TAS
             }
             GameInput.ReleaseDown();
 
-            while (Memory.GetFieldY() >= -2809)
+            while (Memory.GetFieldY() >= -2780)
             {
                 Thread.Sleep(pollTime);
             }
+            Console.WriteLine(Memory.GetFieldY() + ": stopped here");
             GameInput.ReleaseRight();
             GameInput.PressX(); // Talk to Quistis
-
+            // Stopped here
             while (!Memory.CanMove())
             {
                 Thread.Sleep(33);
@@ -195,7 +196,7 @@ namespace FF8TAS
             Choices.AddQueue(Choices.SelphieGarden1);
             Choices.AddQueue(Choices.SelphieGarden2);
             GameInput.HoldDown();
-            Thread.Sleep(1533); // Wait until screen is changed for sure
+            Thread.Sleep(1535); // Wait until screen is changed for sure
             // -1277
             while (Memory.GetFieldX() < -1277)
             {
@@ -633,23 +634,17 @@ namespace FF8TAS
             Thread clearTextThread0 = new Thread(() => HandleTextboxes(0));
             Thread clearTextThread1 = new Thread(() => HandleTextboxes(1));
             clearTextThread0.Start();
-            //Infirmary();
-            //NameMenu();
+            Infirmary();
+            NameMenu();
 
-            //GameInput.ChangeFps(GameInput.State.Field);
-            //Infirmary2();
-            //clearTextThread1.Start();
-            //Corridor();
-            //ClassRoom();
-            //SelphieBonk();
-            //TakeCardsUseLift();
-            //ElevatorMainHall();
-
-            //while (true)
-            //{
-            //    Thread.Sleep(300);
-            //    Console.WriteLine(Memory.IsWM());
-            //}
+            GameInput.ChangeFps(GameInput.State.Field);
+            Infirmary2();
+            clearTextThread1.Start();
+            Corridor();
+            ClassRoom();
+            SelphieBonk();
+            TakeCardsUseLift();
+            ElevatorMainHall();
 
             GatesTakeGFs();
             Console.WriteLine("Balamb Finished!");
@@ -659,9 +654,7 @@ namespace FF8TAS
         {
             Fight fight = new Fight();
             GameInput.HoldL1();
-            Thread.Sleep(32);
             GameInput.HoldRight();
-            Thread.Sleep(32);
             GameInput.HoldSquare();
             Console.WriteLine("WM started");
 
@@ -695,17 +688,11 @@ namespace FF8TAS
             }
             Console.WriteLine("At cavern");
             GameInput.ReleaseRight();
-            Thread.Sleep(32);
             GameInput.ReleaseSquare();
         }
 
         public void FireCavern()
         {
-            //while (true)
-            //{
-            //    Thread.Sleep(300);
-            //    Console.WriteLine(Memory.IsWM());
-            //}
             GameInput.ChangeFps(GameInput.State.Field);
             TravelToCavern();
         }
