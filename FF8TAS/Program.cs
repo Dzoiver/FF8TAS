@@ -32,6 +32,12 @@ namespace FF8TAS
                 Console.WriteLine(Memory.IsWM());
             }
 
+            Thread clearTextThread0 = new Thread(() => route.HandleTextboxes(0));
+            clearTextThread0.Start();
+            Thread clearTextThread1 = new Thread(() => route.HandleTextboxes(1));
+            clearTextThread1.Start();
+            Thread clearTextThread4 = new Thread(() => route.HandleTextboxes(4));
+            clearTextThread4.Start();
 
             if (Memory.GetStoryProgress() < 17)
             route.BalambGarden();

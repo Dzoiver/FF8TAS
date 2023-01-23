@@ -9,6 +9,7 @@ namespace FF8TAS
         static List<Choice> optionsList = new List<Choice>();
         public static Choice SelphieGarden1;
         public static Choice SelphieGarden2;
+        public static Choice QuistisGunblade;
 
         public struct Choice
         {
@@ -33,6 +34,11 @@ namespace FF8TAS
             SelphieGarden2.desiredID = 1;
             SelphieGarden2.name = "Selphie Garden 2";
             SelphieGarden2.isCursorGoDown = true;
+
+            QuistisGunblade = new Choice();
+            QuistisGunblade.desiredID = 3;
+            QuistisGunblade.name = "Qustis gunblade";
+            QuistisGunblade.isCursorGoDown = true;
         }
 
         static public void AddQueue(Choice choice)

@@ -8,6 +8,8 @@ namespace FF8TAS
     class Fight
     {
         private bool isATBHeld = false;
+        private int pollTime = 32;
+        private short maxATB = 12000;
         public void RunFromRandomEncounter()
         {
             Console.WriteLine("Battle started");
@@ -15,28 +17,75 @@ namespace FF8TAS
             GameInput.HoldR2();
             GameInput.HoldL2();
 
-            GameInput.ChangeFps(GameInput.State.Menu);
             while (Memory.GetBattleResult() == 0)
             {
                 HoldATB();
                 GameInput.WaitOneFrame();
             }
 
-            Console.WriteLine("Result screen");
             GameInput.ReleaseR2();
             GameInput.ReleaseL2();
 
-            while (Memory.GetBattleResult() == 1)
-            {
-                GameInput.PressX();
-            }
-            Console.WriteLine("Battle end");
+            BattleResult();
         }
+
+        public void Bats()
+        {
+            Console.WriteLine("Bats started");
+
+            while (!AnyATB_Ready())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.PressX();
+            GameInput.PressX();
+
+            BattleResult();
+        }
+
+        private bool AnyATB_Ready()
+        {
+            return (Memory.GetAlly1CurrentATB() == maxATB ||
+                Memory.GetAlly2CurrentATB() == maxATB ||
+                Memory.GetAlly3CurrentATB() == maxATB);
+        }
+        /*
+         * wait for any ATB
+         * attack bat
+         * wait for any ATB
+         * draw first spell
+         * flee
+        */
 
         private void HoldATB()
         {
             if (isATBHeld)
                 return;
+
+            // Wait until get control
+
+
+            if (Memory.GetATBstatus() == 112)
+            {
+                isATBHeld = true;
+            }
+            else
+            {
+                GameInput.PressUp();
+                GameInput.PressX();
+            }
+        }
+
+        private void BattleResult()
+        {
+            GameInput.ChangeFps(GameInput.State.Menu);
+            Console.WriteLine("Result screen");
+            while (Memory.GetBattleResult() == 1)
+            {
+                GameInput.PressX();
+            }
+            Console.WriteLine("Battle end");
         }
     }
 }

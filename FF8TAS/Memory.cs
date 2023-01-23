@@ -101,7 +101,38 @@ namespace FF8TAS
         private static ulong BattleResult_Address = 0x285D14; // 1678CA4
         private static ulong IsBattle_Address = 0x1362DD; //  17C86DB
         private static ulong StoryProgress_Address = 0x100; // 18FEAB8 +
+        private static ulong ATBStatus = 0x285982; // 1679036 -
+        private static ulong commandPosition = 0x77E8B; // 1976843 +
 
+        private static ulong Ally1CurrentATB = 0x2916C; // 1927B24 + D0 difference
+        private static ulong Ally2CurrentATB = 0x2923C; // 1927BF4 +
+        private static ulong Ally3CurrentATB = 0x2930C; // 1927CC4 +
+
+        public static short GetAlly3CurrentATB()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Ally3CurrentATB);
+            return helper.ReadMemory<short>(targetAddress);
+        }
+        public static short GetAlly2CurrentATB()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Ally2CurrentATB);
+            return helper.ReadMemory<short>(targetAddress);
+        }
+        public static short GetAlly1CurrentATB()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Ally1CurrentATB);
+            return helper.ReadMemory<short>(targetAddress);
+        }
+        static public byte GetCommandPosition()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - commandPosition);
+            return helper.ReadMemory<byte>(targetAddress);
+        }
+        static public byte GetATBstatus()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - ATBStatus);
+            return helper.ReadMemory<byte>(targetAddress);
+        }
         static public byte GetStoryProgress()
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + StoryProgress_Address);
@@ -304,9 +335,7 @@ namespace FF8TAS
         // 10 next page
         static public byte GetTextStatus(int id = 0)
         {
-            ulong address = TextStatus_Address;
-            if (id == 1)
-                address = address + 0x3C * (ulong)id; // + 3C
+            ulong address = TextStatus_Address + 0x3C * (ulong)id;
             ulong targetAddress = helper.GetBaseAddress(address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             LastTextStatus = value;

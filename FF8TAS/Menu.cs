@@ -95,6 +95,25 @@ namespace FF8TAS
             }
         }
 
+        public static void SkipTutorial()
+        {
+            Console.WriteLine("Waiting for tutorial");
+
+            while (!Memory.IsGFMenu())
+            {
+                Thread.Sleep(16);
+            }
+
+            GameInput.HoldTriangle();
+
+            while (Memory.IsGFMenu())
+            {
+                Thread.Sleep(16);
+            }
+            Console.WriteLine("Triangle released");
+            GameInput.ReleaseTriangle();
+        }
+
         public enum CharacterAbility
         {
             Magic,

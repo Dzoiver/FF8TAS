@@ -31,7 +31,7 @@ namespace FF8TAS
 
 
         // 0 -- 1 -- 13 -- 7 -- 1
-        private void HandleTextboxes(int id = 0)
+        public void HandleTextboxes(int id = 0)
         {
             while (true)
             {
@@ -366,21 +366,7 @@ namespace FF8TAS
                 Thread.Sleep(pollTime);
             }
 
-            Console.WriteLine("Waiting for tutorial");
-
-            while (!Memory.IsGFMenu())
-            {
-                Thread.Sleep(pollTime);
-            }
-
-            GameInput.HoldTriangle();
-
-            while (Memory.IsGFMenu())
-            {
-                Thread.Sleep(pollTime);
-            }
-            Console.WriteLine("Triangle released");
-            GameInput.ReleaseTriangle();
+            Menu.SkipTutorial();
 
             GameInput.HoldDown();
 
@@ -625,21 +611,19 @@ namespace FF8TAS
             Console.WriteLine("Finished menu");
             // Left the menu
         }
+
+
         public void BalambGarden()
         {
             Console.WriteLine("Starting game");
             GameInput.PressX();
             Console.WriteLine("FMV time");
             GameInput.ChangeFps(GameInput.State.Field);
-            Thread clearTextThread0 = new Thread(() => HandleTextboxes(0));
-            Thread clearTextThread1 = new Thread(() => HandleTextboxes(1));
-            clearTextThread0.Start();
             Infirmary();
             NameMenu();
 
             GameInput.ChangeFps(GameInput.State.Field);
             Infirmary2();
-            clearTextThread1.Start();
             Corridor();
             ClassRoom();
             SelphieBonk();
@@ -691,10 +675,90 @@ namespace FF8TAS
             GameInput.ReleaseSquare();
         }
 
+        private void CavernEntrance()
+        {
+            if (Memory.GetStoryProgress() >= 21)
+                return;
+
+            GameInput.HoldUp();
+            Menu.SkipTutorial();
+            GameInput.ReleaseUp();
+            Choices.AddQueue(Choices.QuistisGunblade);
+
+            while (!Memory.CanMove())
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.HoldUp();
+
+            while (Memory.GetFieldY() < 4414)
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.ReleaseUp();
+            GameInput.PressX();
+
+            while (!Memory.CanMove())
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.HoldUp();
+
+            while (Memory.GetFieldID() != 131)
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.ReleaseUp();
+        }
+
+        private void InsideCavern()
+        {
+            GameInput.HoldUp();
+            GameInput.HoldRight();
+
+
+            while (Memory.GetFieldY() < -628)
+            {
+                Thread.Sleep(pollTime);
+            }
+            Console.WriteLine("up release");
+            GameInput.ReleaseUp();
+
+            // -628
+
+            while (Memory.CanMove()) // Quistis talk
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            while (Memory.GetFieldX() < 5300)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.HoldUp();
+
+            while (Memory.GetFieldX() < 5800)
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseRight();
+
+            while (!Memory.IsBattle())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            GameInput.ReleaseUp();
+        }
+
         public void FireCavern()
         {
             GameInput.ChangeFps(GameInput.State.Field);
-            TravelToCavern();
+            // TravelToCavern();
+            CavernEntrance();
+            InsideCavern();
         }
     }
 }

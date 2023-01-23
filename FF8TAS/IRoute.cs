@@ -8,7 +8,7 @@ namespace FF8TAS
     {
         public void BalambGarden();
         public void FireCavern();
-
+        public void HandleTextboxes(int id = 0);
         public void ValveCheck();
     }
 }
