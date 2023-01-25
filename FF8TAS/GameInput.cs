@@ -284,5 +284,116 @@ namespace FF8TAS
             isim.Keyboard.KeyUp(key);
             Thread.Sleep(time);
         }
+
+        public static void MoveTo(int x, int y) // Orientation is different on each field so it doesn't really work properly
+        {
+            int currentX = Memory.GetFieldX(); // 0
+            int currentY = Memory.GetFieldY(); // 0
+            int fieldPollTime = 32;
+            int distanceX = x - currentX; // 510
+            int distanceY = y - currentY; // 1200
+            double distance = Math.Sqrt(distanceX * distanceX + distanceY * distanceY); // ~3200
+            byte cameraByte = Memory.GetCameraAngle();
+
+            float deltaCamera = cameraByte - 128;
+            float deltaCameraDegrees = 360f / 256f * deltaCamera; // -16.8
+
+            float someAngle = 45f + deltaCameraDegrees;
+
+            Console.WriteLine("distanceX: " + distanceX);
+            Console.WriteLine("distanceY: " + distanceY);
+
+            int shortestCoordinate;
+            if (Math.Abs(distanceX) < Math.Abs(distanceY)) // 1200x 2940y
+            {
+                shortestCoordinate = distanceX;
+            }
+            else
+            {
+                shortestCoordinate = distanceY;
+            }
+
+            // double firstTriangleKatet = Math.Sqrt(shortestCoordinate * shortestCoordinate + shortestCoordinate * shortestCoordinate);
+
+            float wtfAngle = 180f - (90f + 45f + Math.Abs(deltaCameraDegrees));
+
+            Console.WriteLine("deltaCameraDegrees: " + deltaCameraDegrees);
+            Console.WriteLine("wtfAngle: " + wtfAngle);
+
+            double firstTriangleKatet = (distance * Math.Sin((wtfAngle * Math.PI) / 180)) / Math.Sin((135 * Math.PI) / 180); // 2121
+
+            double fixedCoord = (firstTriangleKatet * Math.Sin((deltaCameraDegrees * Math.PI) / 180)) / Math.Sin((90 * Math.PI) / 180); // 584
+
+            if (fixedCoord != 0)
+                x = (int)fixedCoord;
+
+            Console.WriteLine("fixedCoord: " + fixedCoord);
+
+            Console.WriteLine("someAngle: " + someAngle);
+
+            if (currentX > x)
+                HoldLeft();
+            else if (currentX < x)
+                HoldRight();
+
+
+            if (currentY > y)
+                HoldDown();
+            else if (currentY < y)
+                HoldUp();
+
+            // Check which to release first. Shortest coordinate first
+
+            if (Math.Abs(distanceX) < Math.Abs(distanceY)) // yes
+            {
+                WaitForX(currentX, x, fieldPollTime);
+                WaitForY(currentY, y, fieldPollTime);
+            }
+            else
+            {
+                WaitForY(currentY, y, fieldPollTime);
+                WaitForX(currentX, x, fieldPollTime);
+            }
+        }
+
+        private static void WaitForX(int currentX, int x, int fieldPollTime)
+        {
+            if (currentX < x) // -500 < 0
+            {
+                while (Memory.GetFieldX() < x)
+                {
+                    Thread.Sleep(fieldPollTime);
+                }
+                ReleaseRight();
+            }
+            else
+            {
+                while (Memory.GetFieldX() > x)
+                {
+                    Thread.Sleep(fieldPollTime);
+                }
+                ReleaseLeft();
+            }
+        }
+
+        private static void WaitForY(int currentY, int y, int fieldPollTime)
+        {
+            if (currentY < y)
+            {
+                while (Memory.GetFieldY() < y)
+                {
+                    Thread.Sleep(fieldPollTime);
+                }
+                ReleaseUp();
+            }
+            else
+            {
+                while (Memory.GetFieldY() > y) // -500 < 10 OR 500 > 10
+                {
+                    Thread.Sleep(fieldPollTime);
+                }
+                ReleaseDown();
+            }
+        }
     }
 }

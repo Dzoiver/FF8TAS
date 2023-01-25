@@ -108,6 +108,13 @@ namespace FF8TAS
         private static ulong Ally2CurrentATB = 0x2923C; // 1927BF4 +
         private static ulong Ally3CurrentATB = 0x2930C; // 1927CC4 +
 
+        private static ulong CameraAngleAdress = 0x1A0B0; // 18E4908 
+
+        public static byte GetCameraAngle()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - CameraAngleAdress);
+            return helper.ReadMemory<byte>(targetAddress);
+        }
         public static short GetAlly3CurrentATB()
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Ally3CurrentATB);

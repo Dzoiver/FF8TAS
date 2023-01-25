@@ -26,10 +26,13 @@ namespace FF8TAS
 
         static private void StartRun(IRoute route)
         {
-            while (false) // Debugging the addresses or functions
+            while (true) // Debugging the addresses or functions
             {
-                Thread.Sleep(300);
-                Console.WriteLine(Memory.IsWM());
+                GameInput.MoveTo(-1200, -22000); // 0; -19000
+                //GameInput.MoveTo(0, 0);
+                //GameInput.MoveTo(-500, 0);
+                Thread.Sleep(5300);
+                //Console.WriteLine(Memory.IsWM());
             }
 
             Thread clearTextThread0 = new Thread(() => route.HandleTextboxes(0));

@@ -744,7 +744,7 @@ namespace FF8TAS
             }
 
             GameInput.ReleaseRight();
-
+            Console.WriteLine("Get ready for battle");
             while (!Memory.IsBattle())
             {
                 Thread.Sleep(pollTime);

@@ -8,7 +8,7 @@ namespace FF8TAS
     class Fight
     {
         private bool isATBHeld = false;
-        private int pollTime = 32;
+        private int pollTime = 66;
         private short maxATB = 12000;
         public void RunFromRandomEncounter()
         {
@@ -19,7 +19,8 @@ namespace FF8TAS
 
             while (Memory.GetBattleResult() == 0)
             {
-                HoldATB();
+                if (AnyATB_Ready())
+                    HoldATB();
                 GameInput.WaitOneFrame();
             }
 
@@ -38,8 +39,14 @@ namespace FF8TAS
                 Thread.Sleep(pollTime);
             }
 
-            GameInput.PressX();
-            GameInput.PressX();
+            Attack();
+
+            while (!AnyATB_Ready())
+            {
+                Thread.Sleep(pollTime);
+            }
+
+            // Choose draw
 
             BattleResult();
         }
@@ -47,8 +54,8 @@ namespace FF8TAS
         private bool AnyATB_Ready()
         {
             return (Memory.GetAlly1CurrentATB() == maxATB ||
-                Memory.GetAlly2CurrentATB() == maxATB ||
-                Memory.GetAlly3CurrentATB() == maxATB);
+                    Memory.GetAlly2CurrentATB() == maxATB ||
+                    Memory.GetAlly3CurrentATB() == maxATB);
         }
         /*
          * wait for any ATB
@@ -58,13 +65,18 @@ namespace FF8TAS
          * flee
         */
 
+        private void Attack()
+        {
+            GameInput.PressX();
+            GameInput.PressX();
+        }
+
         private void HoldATB()
         {
             if (isATBHeld)
                 return;
 
             // Wait until get control
-
 
             if (Memory.GetATBstatus() == 112)
             {
