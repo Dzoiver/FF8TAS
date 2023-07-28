@@ -140,10 +140,10 @@ namespace FF8TAS
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - ATBStatus);
             return helper.ReadMemory<byte>(targetAddress);
         }
-        static public byte GetStoryProgress()
+        static public int GetStoryProgress()
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + StoryProgress_Address);
-            byte value = helper.ReadMemory<byte>(targetAddress);
+            int value = helper.ReadMemory<int>(targetAddress);
             return value;
         }
         static public bool IsBattle()
@@ -268,12 +268,22 @@ namespace FF8TAS
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
+
+        /// <summary>
+        /// Equals 16 if the scroll was finished
+        /// </summary>
+        /// <returns></returns>
         static public byte GetJunctionScroll()
         {
             ulong targetAddress = helper.GetBaseAddress(JunctionScroll_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
+
+        /// <summary>
+        /// Equals 0 if not in menu. Equals 3 in menu and ready to move
+        /// </summary>
+        /// <returns></returns>
         static public byte GetMenuCursorStatus()
         {
             ulong targetAddress = helper.GetBaseAddress(MenuCursorStatus_Address);
@@ -292,7 +302,11 @@ namespace FF8TAS
         {
             ulong targetAddress = helper.GetBaseAddress(IsMenu_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
-            return value == 1;
+            if (value == 1)
+                return true;
+            else
+                return false;
+            // return value == 1;
         }
 
         static public int GetFieldID()

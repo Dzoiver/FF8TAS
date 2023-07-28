@@ -10,5 +10,7 @@ namespace FF8TAS
         public void FireCavern();
         public void HandleTextboxes(int id = 0);
         public void ValveCheck();
+
+        public void LD2Skip();
     }
 }

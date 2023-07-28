@@ -760,5 +760,28 @@ namespace FF8TAS
             CavernEntrance();
             InsideCavern();
         }
+
+
+        public void LD2Skip()
+        {
+            GameInput.ChangeFps(GameInput.State.Field);
+            GameInput.HoldUp(10);
+            GameInput.HoldCircle();
+            while (Memory.GetMenuCursorStatus() != 1)
+            {
+                Thread.Sleep(pollTime);
+            }
+            Console.WriteLine("In menu yahoo");
+            GameInput.ReleaseCircle(8);
+            GameInput.ReleaseUp();
+            Console.WriteLine(Memory.GetMenuCursorStatus().ToString());
+            while (Memory.GetMenuCursorStatus() != 3)
+            {
+                Thread.Sleep(pollTime);
+            }
+            Console.WriteLine(Memory.GetMenuCursorStatus().ToString());
+            Console.WriteLine("Close menu");
+            GameInput.PressTriangle();
+        }
     }
 }

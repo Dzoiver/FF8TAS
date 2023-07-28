@@ -10,6 +10,7 @@ namespace FF8TAS
     {
         static public InputSimulator isim;
         static private int fps = (int)State.Menu;
+        static private int cameraShifts;
         static GameInput()
         {
             isim = new InputSimulator();
@@ -19,7 +20,7 @@ namespace FF8TAS
         {
             fps = (int)state;
         }
-        
+
         public enum State
         {
             Battle = 15,
@@ -78,10 +79,10 @@ namespace FF8TAS
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Left);
             Thread.Sleep(16);
         }
-        static public void HoldUp()
+        static public void HoldUp(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Up);
-            WaitOneFrame();
+            WaitOneFrame(wait);
         }
         static public void HoldRight()
         {
@@ -99,10 +100,10 @@ namespace FF8TAS
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Left);
             Thread.Sleep(16);
         }
-        static public void ReleaseUp()
+        static public void ReleaseUp(int wait = 0)
         {
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Up);
-            Thread.Sleep(16);
+            WaitOneFrame(wait);
         }
         static public void ReleaseRight(int wait = 0)
         {
@@ -133,7 +134,7 @@ namespace FF8TAS
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Right);
             WaitOneFrame();
         }
-        
+
         static public void PressLeft()
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Left);
@@ -176,12 +177,12 @@ namespace FF8TAS
             WaitOneFrame(wait);
         }
 
-        static public void PressCircle()
+        static public void PressCircle(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
-            WaitOneFrame();
+            WaitOneFrame(wait);
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
-            WaitOneFrame();
+            WaitOneFrame(wait);
         }
 
         static public void PressR1()
@@ -252,6 +253,17 @@ namespace FF8TAS
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Triangle);
         }
 
+        static public void HoldCircle()
+        {
+            isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
+        }
+
+        static public void ReleaseCircle(int wait = 0)
+        {
+            isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
+            WaitOneFrame(wait);
+        }
+
         static public void WaitOneFrame(int wait = 0)
         {
             if (wait != 0)
@@ -290,15 +302,74 @@ namespace FF8TAS
             int currentX = Memory.GetFieldX(); // 0
             int currentY = Memory.GetFieldY(); // 0
             int fieldPollTime = 32;
-            int distanceX = x - currentX; // 510
-            int distanceY = y - currentY; // 1200
+            int distanceX = x - currentX; // 1200
+            int distanceY = y - currentY; // 3000
             double distance = Math.Sqrt(distanceX * distanceX + distanceY * distanceY); // ~3200
             byte cameraByte = Memory.GetCameraAngle();
 
-            float deltaCamera = cameraByte - 128;
-            float deltaCameraDegrees = 360f / 256f * deltaCamera; // -16.8
+            byte defaultCamera = 128;
 
-            float someAngle = 45f + deltaCameraDegrees;
+            float deltaCamera = cameraByte - 128; // 93 (35) = 50 gradusov
+
+            cameraShifts = (int)deltaCamera / 32;
+            Console.WriteLine("cameraShifts: " + cameraShifts);
+
+            int fakeX = x;
+            int fakeY = y;
+
+            if (cameraShifts == -1) // 96 --- ok = 3
+            {
+                fakeX = currentX + distanceX;
+                fakeY = currentY - distanceY;
+
+                //x: -1046
+                //y: -23000
+            }
+            else if (cameraShifts == -2) // 64
+            {
+                fakeX = currentX - distanceY;
+                fakeY = currentY + distanceX;
+            }
+            else if (cameraShifts == -3) // 32 --- ok
+            {
+                fakeX = currentX + distanceY;
+                fakeY = currentY + distanceX;
+            }
+            else if (cameraShifts == -4 || cameraShifts == 4) // 0
+            {
+                fakeX = currentX - distanceX;
+                fakeY = currentY - distanceY;
+            }
+            else if (cameraShifts == 3) // 224 --- ok
+            {
+                fakeX = currentX - distanceX;
+                fakeY = currentY + distanceY;
+            }
+            else if (cameraShifts == 2) // 192 --- ok
+            {
+                fakeX = currentX + distanceY;
+                fakeY = currentY - distanceX;
+            }
+            else if (cameraShifts == 1) // 160 --- ok
+            {
+                fakeX = currentX - distanceY;
+                fakeY = currentY - distanceX;
+            }
+
+            Console.WriteLine("x: " + x);
+            Console.WriteLine("y: " + y);
+            Console.WriteLine("fakeX: " + fakeX);
+            Console.WriteLine("fakeY: " + fakeY);
+
+            //while (true)
+            //{
+            //    if (Math.Abs(deltaCamera) > 32)
+            //    {
+            //        cameraByte - 32;
+            //    }
+            //}
+
+            float deltaCameraDegrees = 360f / 256f * deltaCamera; // -16.8
 
             Console.WriteLine("distanceX: " + distanceX);
             Console.WriteLine("distanceY: " + distanceY);
@@ -315,45 +386,164 @@ namespace FF8TAS
 
             // double firstTriangleKatet = Math.Sqrt(shortestCoordinate * shortestCoordinate + shortestCoordinate * shortestCoordinate);
 
-            float wtfAngle = 180f - (90f + 45f + Math.Abs(deltaCameraDegrees));
 
+
+
+            // DIMA
+            //float wtfAngle = 180f - (90f + 45f + Math.Abs(deltaCameraDegrees));
+
+            //Console.WriteLine("deltaCameraDegrees: " + deltaCameraDegrees);
+            //Console.WriteLine("wtfAngle: " + wtfAngle);
+
+            //double firstTriangleKatet = (distance * Math.Sin((wtfAngle * Math.PI) / 180)) / Math.Sin((135 * Math.PI) / 180); // 2121  // 28
+
+            //double fixedCoord = (firstTriangleKatet * Math.Sin((deltaCameraDegrees * Math.PI) / 180)) / Math.Sin((90 * Math.PI) / 180); // 584    // 16
+
+            //if (fixedCoord != 0)
+            //    x = (int)fixedCoord;
+            //
+
+            // Seifer
+
+
+            //float wtfAngle = 180f - (135f + Math.Abs(deltaCameraDegrees));
+            //double firstTriangleKatet = (distance * Math.Sin((wtfAngle * Math.PI) / 180)) / Math.Sin((135 * Math.PI) / 180); // 2121
+
+            //double fixedCoord = (firstTriangleKatet * Math.Sin((wtfAngle * Math.PI) / 180)) / Math.Sin((90 * Math.PI) / 180); // 584
+            //x = (int)fixedCoord;
+
+            //
+
+            double AP = Math.Sqrt(distanceX * distanceX * 2);
+            Console.WriteLine("x: " + x);
+
+            double DP = Math.Abs(distanceY - distanceX);
+
+            double DAP = Math.Acos((distance * distance + AP * AP - DP * DP) / (2 * distance * AP)) * 180 / Math.PI; // 22
+            //double DAP = (distance * distance + AP * AP - DP * DP) / (2 * distance * AP);
+
+            double DAM = DAP - deltaCameraDegrees; // 5
+
+            Console.WriteLine("distance: " + distance);
+            Console.WriteLine("distanceX: " + distanceX);
+            Console.WriteLine("distanceY: " + distanceY);
             Console.WriteLine("deltaCameraDegrees: " + deltaCameraDegrees);
-            Console.WriteLine("wtfAngle: " + wtfAngle);
+            Console.WriteLine("AP: " + AP);
+            Console.WriteLine("DP: " + DP);
+            Console.WriteLine("DAP: " + DAP);
+            Console.WriteLine("DAM: " + DAM);
+            // Console.WriteLine("deltaCameraDegrees: " + deltaCameraDegrees);
 
-            double firstTriangleKatet = (distance * Math.Sin((wtfAngle * Math.PI) / 180)) / Math.Sin((135 * Math.PI) / 180); // 2121
 
-            double fixedCoord = (firstTriangleKatet * Math.Sin((deltaCameraDegrees * Math.PI) / 180)) / Math.Sin((90 * Math.PI) / 180); // 584
+            double ADC = 180f - (135f + DAM);
+            Console.WriteLine("ADC: " + ADC);
+            double AC = (distance * Math.Sin((ADC * Math.PI) / 180)) / Math.Sin((135 * Math.PI) / 180); // 2121
+            Console.WriteLine("AC: " + AC);
+            double ACB = 90f - 45f - deltaCameraDegrees;
+            Console.WriteLine("ACB: " + ACB);
+            double AB = (AC * Math.Sin((ACB * Math.PI) / 180)) / Math.Sin((90 * Math.PI) / 180); // 584
 
-            if (fixedCoord != 0)
-                x = (int)fixedCoord;
+            //if (distanceX < distanceY)
+            //    distanceX = (int)AB;
 
-            Console.WriteLine("fixedCoord: " + fixedCoord);
+            //if (distanceY < distanceX)
+            //    distanceY = (int)AB;
+            Console.WriteLine("AB: " + AB);
 
-            Console.WriteLine("someAngle: " + someAngle);
 
-            if (currentX > x)
+            StartMovement();
+
+
+            // 64  WD -> W
+
+            if (currentX > fakeX && cameraShifts != -3) // 98 > -274
+            {
                 HoldLeft();
-            else if (currentX < x)
+                Console.WriteLine("ya derzhu vlevo chel");
+            }
+            else if (currentX < fakeX && (cameraShifts != 1 || cameraShifts != 3)) // 64
+            {
                 HoldRight();
+                Console.WriteLine("ya derzhu pravo chel");
+            }
 
-
-            if (currentY > y)
+            
+            if (currentY > fakeY) 
                 HoldDown();
-            else if (currentY < y)
+            else if (currentY < fakeY && cameraShifts != -1) // 64
                 HoldUp();
 
             // Check which to release first. Shortest coordinate first
 
             if (Math.Abs(distanceX) < Math.Abs(distanceY)) // yes
             {
+                Console.WriteLine("x then y");
                 WaitForX(currentX, x, fieldPollTime);
                 WaitForY(currentY, y, fieldPollTime);
             }
             else
             {
+                Console.WriteLine("y then x");
                 WaitForY(currentY, y, fieldPollTime);
                 WaitForX(currentX, x, fieldPollTime);
             }
+
+            Console.WriteLine("movement complete");
+        }
+
+        private static void StartMovement()
+        {
+            // move x and move y
+            // if x complete, stop x; if y complete, stop y
+
+            MoveX();
+            MoveY();
+            CheckDestination();
+        }
+
+        private static void MoveX()
+        {
+            // x = cos(a * pi/2)
+            // y = sin(a * pi/2)
+            // 160
+            // 1 Right = x++, y++
+            // 2 DR = x++
+            // 3 Down = x++, y--
+            // 4 DL = y--
+            // 5 Left = x--, y++
+            // 6 UL = x--
+            // 7 Up = x--, y++
+            // 8 UR = y++
+
+            // 128
+            // 1 Right = x++
+            // 2 DR = x++, y--
+            // 3 Down = y--
+            // 4 DL = x--, y++
+            // 5 Left = x--
+            // 6 UL = x--, y++
+            // 7 Up = y++
+            // 8 UR = x++, y++
+
+            // 96
+            // 1 Right = x++ & y--
+            // 2 DR = y--
+            // 3 Down = x--, y--
+            // 4 DL = x--
+            // 5 Left = x-- & y++
+            // 6 UL = y++
+            // 7 Up = x++ & y++, 
+            // 8 UR = x++
+        }
+
+        private static void MoveY()
+        {
+
+        }
+
+        private static void CheckDestination()
+        {
+
         }
 
         private static void WaitForX(int currentX, int x, int fieldPollTime)
@@ -365,6 +555,15 @@ namespace FF8TAS
                     Thread.Sleep(fieldPollTime);
                 }
                 ReleaseRight();
+                ReleaseLeft();
+                if (cameraShifts == 1)
+                {
+                    ReleaseDown();
+                }
+                if (cameraShifts == -1)
+                {
+                    ReleaseUp();
+                }
             }
             else
             {
@@ -372,6 +571,7 @@ namespace FF8TAS
                 {
                     Thread.Sleep(fieldPollTime);
                 }
+                ReleaseRight();
                 ReleaseLeft();
             }
         }
@@ -380,19 +580,58 @@ namespace FF8TAS
         {
             if (currentY < y)
             {
+                Console.WriteLine("current is less");
                 while (Memory.GetFieldY() < y)
                 {
                     Thread.Sleep(fieldPollTime);
                 }
                 ReleaseUp();
+                ReleaseDown();
+                Console.WriteLine("reached y");
             }
             else
             {
+                Console.WriteLine("current is greater");
                 while (Memory.GetFieldY() > y) // -500 < 10 OR 500 > 10
                 {
                     Thread.Sleep(fieldPollTime);
                 }
-                ReleaseDown();
+
+                if (cameraShifts == -2)
+                {
+                    ReleaseRight();
+                }
+
+                if (cameraShifts == 0)
+                {
+                    ReleaseUp();
+                }
+                if (cameraShifts == -3)
+                {
+                    HoldLeft();
+                }
+
+                if (cameraShifts == 2)
+                {
+                    ReleaseLeft();
+                }
+
+                if (cameraShifts == 0)
+                {
+                    ReleaseDown();
+                }
+                if (cameraShifts == 1)
+                {
+                    HoldRight();
+                }
+
+                if (cameraShifts == -1)
+                {
+                    HoldUp();
+                    Console.WriteLine("hold up");
+                }
+
+                Console.WriteLine("reached y");
             }
         }
     }

@@ -18,7 +18,7 @@ namespace FF8TAS
         private static ulong EN_OptionChoice = 0x192B35B;
         private static ulong EN_IsGFMenu = 0x18E4A68;
         private static ulong EN_TextBox = 0x192B585;
-        private static ulong EN_IsMenu = 0x18E490B;
+        private static ulong EN_IsMenu = 0x1976C52; //  18E490B previosly was used, don't know why
         private static ulong EN_FieldID = 0x18D2FC0;
         private static ulong EN_CanMove = 0x199D018;
         private static ulong EN_TextID = 0x148C8C8;

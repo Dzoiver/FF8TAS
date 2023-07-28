@@ -26,12 +26,12 @@ namespace FF8TAS
 
         static private void StartRun(IRoute route)
         {
-            while (true) // Debugging the addresses or functions
+            while (false) // Debugging the addresses or functions
             {
-                GameInput.MoveTo(-1200, -22000); // 0; -19000
+                // GameInput.MoveTo(1242, -23000); // 0; -23000
                 //GameInput.MoveTo(0, 0);
                 //GameInput.MoveTo(-500, 0);
-                Thread.Sleep(5300);
+                // Thread.Sleep(5300);
                 //Console.WriteLine(Memory.IsWM());
             }
 
@@ -45,7 +45,15 @@ namespace FF8TAS
             if (Memory.GetStoryProgress() < 17)
             route.BalambGarden();
 
+            if (Memory.GetStoryProgress() < 290)
             route.FireCavern();
+
+            if (Memory.GetStoryProgress() == 290)
+            {
+                route.LD2Skip();
+            }
+
+
         }
     }
 }
