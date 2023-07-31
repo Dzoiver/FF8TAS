@@ -57,6 +57,7 @@ namespace FF8TAS
 
             IntPtr h = process.MainWindowHandle;
             SetForegroundWindow(h);
+            Console.WriteLine("Game is focused");
         }
 
         public static ulong FieldX_Address;
@@ -94,12 +95,14 @@ namespace FF8TAS
         public static ulong GF_AbilityPos1_Address;
         public static ulong GF_AbilityPos2_Address;
 
-        private static ulong WMCameraTilt_Address = 0x34034A; // 0x18fe9b8 - 1C3ED02 = 34034A
+        private static ulong WM_MoveStatus = 0xB619F; // 1848819
+
+        private static ulong WMCameraTilt_Address = 0x34034A; // 0x18fe9b8 - 1C3ED02 = 34034A 18FEA0C
         // here will be the relative address + memory base
         private static ulong IsWM_Address = 0x1B71AD; //  0x174780B
         private static ulong CameraDirection_Address = 0x34034A; // 0x1C3ED02 +
-        private static ulong BattleResult_Address = 0x285D14; // 1678CA4
-        private static ulong IsBattle_Address = 0x1362DD; //  17C86DB
+        private static ulong BattleResult_Address = 0x285D14; // 1678CA4 
+        private static ulong IsBattle_Address = 0x2BAD8; // 18D2EE0 -
         private static ulong StoryProgress_Address = 0x100; // 18FEAB8 +
         private static ulong ATBStatus = 0x285982; // 1679036 -
         private static ulong commandPosition = 0x77E8B; // 1976843 +
@@ -173,6 +176,17 @@ namespace FF8TAS
         static public byte GetWMCameraTilt()
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + WMCameraTilt_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        /// <summary>
+        /// Equals 0 if can walk on a WM, 2 if opening a menu
+        /// </summary>
+        /// <returns></returns>
+        static public byte GetWMStatus()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - WM_MoveStatus);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
@@ -323,16 +337,16 @@ namespace FF8TAS
             return value == 0;
         }
 
-        static public int GetFieldX()
+        static public short GetFieldX()
         {
             ulong targetAddress = helper.GetBaseAddress(FieldX_Address);
-            int value = helper.ReadMemory<int>(targetAddress);
+            short value = helper.ReadMemory<short>(targetAddress);
             return value;
         }
-        static public int GetFieldY()
+        static public short GetFieldY()
         {
             ulong targetAddress = helper.GetBaseAddress(FieldY_Address);
-            int value = helper.ReadMemory<int>(targetAddress);
+            short value = helper.ReadMemory<short>(targetAddress);
             return value;
         }
         static public byte GetBGDraw()
@@ -394,6 +408,14 @@ namespace FF8TAS
                 return true;
             else
                 return false;
+        }
+
+        private static ulong PreviousMapID_Adress = 0x54; // FF8_EN.exe+18FEA0C
+        static public short GetPreviousMapID()
+        {
+            ulong targetAddress = helper.GetBaseAddress(PreviousMapID_Adress + Language.BaseAddress);
+            short value = helper.ReadMemory<short>(targetAddress);
+            return value;
         }
         // 156ED16
         // 18E4906

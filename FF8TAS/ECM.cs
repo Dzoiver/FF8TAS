@@ -704,7 +704,7 @@ namespace FF8TAS
             }
             GameInput.HoldUp();
 
-            while (Memory.GetFieldID() != 131)
+            while (Memory.GetPreviousMapID() != 129)
             {
                 Thread.Sleep(pollTime);
             }
@@ -713,9 +713,9 @@ namespace FF8TAS
 
         private void InsideCavern()
         {
-            GameInput.HoldUp();
-            GameInput.HoldRight();
-
+            Thread.Sleep(50);
+            GameInput.HoldUp(1);
+            GameInput.HoldRight(1);
 
             while (Memory.GetFieldY() < -628)
             {
@@ -725,18 +725,19 @@ namespace FF8TAS
             GameInput.ReleaseUp();
 
             // -628
-
+            /*
             while (Memory.CanMove()) // Quistis talk
             {
                 Thread.Sleep(pollTime);
             }
-
+            */
             while (Memory.GetFieldX() < 5300)
             {
                 Thread.Sleep(pollTime);
             }
 
             GameInput.HoldUp();
+            Console.WriteLine("Hold up");
 
             while (Memory.GetFieldX() < 5800)
             {
@@ -749,7 +750,7 @@ namespace FF8TAS
             {
                 Thread.Sleep(pollTime);
             }
-
+            Console.WriteLine("Battle started");
             GameInput.ReleaseUp();
         }
 
@@ -757,31 +758,62 @@ namespace FF8TAS
         {
             GameInput.ChangeFps(GameInput.State.Field);
             // TravelToCavern();
-            CavernEntrance();
+            // CavernEntrance();
+
+            GameInput.HoldUp();
+
+            while (Memory.GetPreviousMapID() != 129)
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.ReleaseUp();
+
             InsideCavern();
         }
 
 
         public void LD2Skip()
         {
-            GameInput.ChangeFps(GameInput.State.Field);
-            GameInput.HoldUp(10);
-            GameInput.HoldCircle();
+            GameInput.ChangeFps(GameInput.State.WM);
+            GameInput.HoldUp(1);
+            GameInput.HoldCircle(1);
             while (Memory.GetMenuCursorStatus() != 1)
             {
                 Thread.Sleep(pollTime);
             }
-            Console.WriteLine("In menu yahoo");
             GameInput.ReleaseCircle(8);
             GameInput.ReleaseUp();
-            Console.WriteLine(Memory.GetMenuCursorStatus().ToString());
+            for (int i = 0; i < 40; i++)
+            {
+                GameInput.ReleaseUp(1);
+
+                while (Memory.GetMenuCursorStatus() != 3)
+                {
+                    Thread.Sleep(pollTime);
+                }
+                GameInput.PressTriangle(16);
+                GameInput.HoldUp(1);
+                Thread.Sleep(533);
+                //while (Memory.GetWMStatus() != 0){Thread.Sleep(1);}
+                GameInput.HoldCircle(35);
+                GameInput.ReleaseCircle();
+
+                while (Memory.GetMenuCursorStatus() != 1)
+                {
+                    Thread.Sleep(pollTime);
+                }
+            }
             while (Memory.GetMenuCursorStatus() != 3)
             {
                 Thread.Sleep(pollTime);
             }
-            Console.WriteLine(Memory.GetMenuCursorStatus().ToString());
-            Console.WriteLine("Close menu");
-            GameInput.PressTriangle();
+            GameInput.PressTriangle(33);
+            while (Memory.GetWMStatus() != 0) 
+            { 
+                Thread.Sleep(16); 
+            }
+            GameInput.ReleaseUp();
+
         }
     }
 }

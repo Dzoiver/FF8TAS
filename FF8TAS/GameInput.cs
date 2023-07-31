@@ -25,7 +25,8 @@ namespace FF8TAS
         {
             Battle = 15,
             Field = 30,
-            Menu = 59
+            Menu = 59,
+            WM = 30
         }
 
         public enum Entity
@@ -68,37 +69,37 @@ namespace FF8TAS
             }
         }
 
-        static public void HoldDown()
+        static public void HoldDown(int wait = 0)
         {
 
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Down);
-            Thread.Sleep(16);
+            WaitOneFrame(wait);
         }
-        static public void HoldLeft()
+        static public void HoldLeft(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Left);
-            Thread.Sleep(16);
+            WaitOneFrame(wait);
         }
         static public void HoldUp(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Up);
             WaitOneFrame(wait);
         }
-        static public void HoldRight()
+        static public void HoldRight(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Right);
-            WaitOneFrame();
+            WaitOneFrame(wait);
         }
 
-        static public void ReleaseDown()
+        static public void ReleaseDown(int wait = 0)
         {
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Down);
-            Thread.Sleep(16);
+            WaitOneFrame(wait);
         }
-        static public void ReleaseLeft()
+        static public void ReleaseLeft(int wait = 0)
         {
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Left);
-            Thread.Sleep(16);
+            WaitOneFrame(wait);
         }
         static public void ReleaseUp(int wait = 0)
         {
@@ -172,9 +173,9 @@ namespace FF8TAS
         static public void PressTriangle(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Triangle);
-            WaitOneFrame(wait);
+            WaitOneFrame();
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Triangle);
-            WaitOneFrame(wait);
+            //WaitOneFrame();
         }
 
         static public void PressCircle(int wait = 0)
@@ -253,9 +254,10 @@ namespace FF8TAS
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Triangle);
         }
 
-        static public void HoldCircle()
+        static public void HoldCircle(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
+            WaitOneFrame(wait);
         }
 
         static public void ReleaseCircle(int wait = 0)

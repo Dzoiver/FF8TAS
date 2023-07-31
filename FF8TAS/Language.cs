@@ -43,6 +43,8 @@ namespace FF8TAS
         private static ulong EN_GF_AbilityPos1 = 0x1976CF1;
         private static ulong EN_GF_AbilityPos2 = 0x1976CF2;
 
+        private static ulong EN_WM_MoveStatus = 0x1848819;
+
         private static ulong EN_WMCameraTilt = 0x1C3ED08;
 
         // French addresses
@@ -99,6 +101,8 @@ namespace FF8TAS
                 Memory.GF_LearnScroll_Address = EN_GF_LearnScroll;
                 Memory.GF_AbilityPos1_Address = EN_GF_AbilityPos1;
                 Memory.GF_AbilityPos2_Address = EN_GF_AbilityPos2;
+
+
             }
         }
     }

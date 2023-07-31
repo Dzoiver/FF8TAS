@@ -28,11 +28,21 @@ namespace FF8TAS
         {
             while (false) // Debugging the addresses or functions
             {
+                Console.WriteLine(Memory.IsBattle());
+                /*
+                GameInput.PressTriangle();
+                Console.WriteLine("Leave menu");
+                Thread.Sleep(500);
+                //while (Memory.GetWMStatus() != 0){Thread.Sleep(1);}
+                GameInput.HoldCircle(35);
+                GameInput.ReleaseCircle();
+                Console.WriteLine("Enter menu");
+                Thread.Sleep(2000);
+                */
                 // GameInput.MoveTo(1242, -23000); // 0; -23000
                 //GameInput.MoveTo(0, 0);
                 //GameInput.MoveTo(-500, 0);
-                // Thread.Sleep(5300);
-                //Console.WriteLine(Memory.IsWM());
+
             }
 
             Thread clearTextThread0 = new Thread(() => route.HandleTextboxes(0));
