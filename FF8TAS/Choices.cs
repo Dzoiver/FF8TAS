@@ -10,6 +10,7 @@ namespace FF8TAS
         public static Choice SelphieGarden1;
         public static Choice SelphieGarden2;
         public static Choice QuistisGunblade;
+        public static Choice YellowHat;
 
         public struct Choice
         {
@@ -39,11 +40,17 @@ namespace FF8TAS
             QuistisGunblade.desiredID = 3;
             QuistisGunblade.name = "Qustis gunblade";
             QuistisGunblade.isCursorGoDown = true;
+
+            YellowHat = new Choice();
+            YellowHat.desiredID = 0;
+            YellowHat.name = "Cavern Entrance";
+            YellowHat.isCursorGoDown = true;
         }
 
         static public void AddQueue(Choice choice)
         {
             optionsList.Add(choice);
+            Console.WriteLine("Added dialogue option: " + choice.name);
         }
 
         static public Choice GetNextChoice()

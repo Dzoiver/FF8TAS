@@ -203,6 +203,13 @@ namespace FF8TAS
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.L1);
         }
 
+        static public void PressL1(int wait = 0)
+        {
+            isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.L1);
+            WaitOneFrame(wait);
+            isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.L1);
+        }
+
         static public void HoldR2()
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.R2);
@@ -264,6 +271,7 @@ namespace FF8TAS
         {
             if (wait != 0)
             {
+                Console.WriteLine(wait.ToString());
                 Thread.Sleep(wait);
                 return;
             }

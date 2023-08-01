@@ -57,10 +57,14 @@ namespace FF8TAS
                     }
                 }
 
-                if (Memory.LastTextStatus == 13)
+                if (Memory.LastTextStatus == 13) // Choice is ready
                 {
+                    while (Memory.GetDialogueSize(id) != 16)
+                    {
+                        Thread.Sleep(pollTime);
+                    }
                     Choices.Choice desiredChoice = Choices.GetNextChoice();
-                    while (Memory.GetOptionChoice() != desiredChoice.desiredID && desiredChoice.name != "") // Not Finished Printing
+                    while (Memory.GetOptionChoice(id) != desiredChoice.desiredID && desiredChoice.name != "") // Not Finished Printing
                     {
                         if (desiredChoice.isCursorGoDown)
                             GameInput.PressDown();
@@ -69,7 +73,9 @@ namespace FF8TAS
                     }
                     Console.WriteLine("Desired option reached");
                 }
-                GameInput.KeyDownUpFrame(WindowsInput.Native.VirtualKeyCode.VK_K);
+
+                Console.WriteLine("last text status: " + Memory.LastTextStatus);
+                GameInput.PressX(33);
                 textBoxCount++;
                 // Console.WriteLine("Cleared " + textBoxCount + " text");
             }
@@ -649,7 +655,7 @@ namespace FF8TAS
                     GameInput.ReleaseL1();
                     GameInput.ReleaseSquare();
                     GameInput.ReleaseRight();
-                    fight.RunFromRandomEncounter();
+                    fight.RunFromEncounter();
                     GameInput.HoldL1();
                     GameInput.HoldRight();
                     GameInput.HoldSquare();
@@ -664,7 +670,7 @@ namespace FF8TAS
                 {
                     GameInput.ReleaseSquare();
                     GameInput.ReleaseRight();
-                    fight.RunFromRandomEncounter();
+                    fight.RunFromEncounter();
                     GameInput.HoldRight();
                     GameInput.HoldSquare();
                 }
@@ -695,6 +701,7 @@ namespace FF8TAS
             {
                 Thread.Sleep(pollTime);
             }
+            
             GameInput.ReleaseUp();
             GameInput.PressX();
 
@@ -759,7 +766,7 @@ namespace FF8TAS
         public void FireCavern()
         {
             GameInput.ChangeFps(GameInput.State.Field);
-            TravelToCavern();
+            //TravelToCavern();
             CavernEntrance();
             InsideCavern();
         }

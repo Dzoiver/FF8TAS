@@ -11,7 +11,32 @@ namespace FF8TAS
         private int pollTime = 66;
         private short maxATB = 12000;
         private const int maxCommands = 3;
-        public void RunFromRandomEncounter()
+        private bool targetWindowOpened = false;
+
+        public enum Command
+        {
+            Attack = 87,
+            Magic = 118,
+            Draw = 202,
+            Item = 156
+        }
+
+        public enum Magic
+        {
+            Fire = 143,
+            Thunder = 144,
+            Blizzard = 206,
+            Unknown
+        }
+
+        public enum DrawType
+        {
+            Stock = 11,
+            Cast = 245
+        }
+
+
+        public void RunFromEncounter()
         {
             Console.WriteLine("Battle started");
             GameInput.ChangeFps(GameInput.State.Battle);
@@ -36,38 +61,64 @@ namespace FF8TAS
             GameInput.ChangeFps(GameInput.State.Battle);
             Console.WriteLine("Bats started");
 
-            while (!AnyATB_Ready())
+            if (Memory.GetSelectedAlly() == 0) // If Quistis first, do attack then draw
+            {
+                Attack();
+
+                ChooseCommand(Command.Draw);
+                SelectTarget(16); // Bat
+                SelectDrawMagic(Magic.Unknown, 0);
+                Draw(DrawType.Stock);
+            }
+            else // If Squall first, do draw first
+            {
+                ChooseCommand(Command.Draw);
+                SelectTarget(); // Bat
+                SelectDrawMagic(Magic.Unknown, 0);
+                Draw(DrawType.Stock);
+
+                Attack();
+            }
+
+            // Run when draw is happening or finished
+            while (Memory.GetSquall_ItemAmount(0) == 0 && Memory.GetEnemyHealth(0) != 0)
+            {
+                // Attack();
+                Thread.Sleep(pollTime);
+            }
+            RunFromEncounter();
+        }
+
+        private void Draw(DrawType drawType)
+        {
+            while (Memory.GetChoiceStockCastScale() != 16)
             {
                 Thread.Sleep(pollTime);
             }
 
-            Attack();
-
-            while (!AnyATB_Ready())
+            while (Memory.GetCommandSelectedType() != (int)drawType)
             {
-                Thread.Sleep(pollTime);
+                GameInput.PressDown();
             }
-
-
-            // Choose draw
-            ChooseCommand(2);
-            // Choose target
             GameInput.PressX();
+            Console.WriteLine("Draw Stock or Cast");
+        }
 
-            GameInput.HoldR2();
-            GameInput.HoldL2();
-
-            while (Memory.GetBattleResult() == 0)
+        private void SelectDrawMagic(Magic magic = Magic.Unknown, int desiredIndex = 0)
+        {
+            while (Memory.GetChoiceMagicScale() != 16)
             {
-                if (AnyATB_Ready())
-                    HoldATB();
-                GameInput.WaitOneFrame();
+                Thread.Sleep(pollTime);
             }
-
-            GameInput.ReleaseR2();
-            GameInput.ReleaseL2();
-
-            BattleResult();
+            if (magic == Magic.Unknown)
+            {
+                while (Memory.GetMagicChoiceIndex() != desiredIndex)
+                {
+                    GameInput.PressDown();
+                }
+            }
+            GameInput.PressX();
+            Console.WriteLine("Magic selected");
         }
 
         private bool AnyATB_Ready()
@@ -77,17 +128,30 @@ namespace FF8TAS
                     Memory.GetAlly3CurrentATB() == maxATB);
         }
 
-        private void ChooseCommand(int desiredIndex = 0)
+        private void SelectTarget(int targetID = 0)
         {
-            // find out the direction
-            bool isDown = true;
-            int currentIndex = Memory.GetBattleCommand();
-            int difference = Math.Abs(currentIndex - desiredIndex);
-            if (difference > 2)
+            bool horizontal = true;
+            while (Memory.GetBattleTarget() != targetID)
             {
-                isDown = false;
+                if (horizontal)
+                {
+                    GameInput.PressDown();
+                }
             }
-            while (Memory.GetBattleCommand() != desiredIndex)
+            Thread.Sleep(pollTime);
+            GameInput.PressX();
+            
+            Console.WriteLine("Target selected");
+        }
+
+        private void ChooseCommand(Command command = Command.Attack, bool isDown = true)
+        {
+            while (!AnyATB_Ready())
+            {
+                Thread.Sleep(pollTime);
+            }
+            // find out the direction
+            while (Memory.GetCommandSelectedType() != (int)command)
             {
                 if (isDown)
                     GameInput.PressDown();
@@ -96,6 +160,7 @@ namespace FF8TAS
             }
             // go that direction until needed index
             GameInput.PressX();
+            Console.WriteLine("Draw selected");
         }
         /*
          * wait for any ATB
@@ -107,7 +172,21 @@ namespace FF8TAS
 
         private void Attack()
         {
+            while (Memory.GetCommandWindowScale() != 16)
+            {
+                Thread.Sleep(pollTime);
+            }
+            Console.WriteLine("Attacking");
             GameInput.PressX();
+            if (!targetWindowOpened)
+            {
+                GameInput.PressL1();
+            }
+            else
+            {
+                Thread.Sleep(pollTime);
+            }
+
             GameInput.PressX();
         }
 

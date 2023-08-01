@@ -107,7 +107,7 @@ namespace FF8TAS
         private static ulong ATBStatus = 0x285982; // 1679036 -
         private static ulong commandPosition = 0x77E8B; // 1976843 +
 
-        private static ulong Ally1CurrentATB = 0x2916C; // 1927B24 + D0 difference
+        private static ulong Ally1CurrentATB = 0x2916C; // 1927B24 + D0 difference    // FF8_EN.exe+1927B24
         private static ulong Ally2CurrentATB = 0x2923C; // 1927BF4 +
         private static ulong Ally3CurrentATB = 0x2930C; // 1927CC4 +
 
@@ -120,17 +120,17 @@ namespace FF8TAS
         }
         public static short GetAlly3CurrentATB()
         {
-            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Ally3CurrentATB);
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + Ally3CurrentATB);
             return helper.ReadMemory<short>(targetAddress);
         }
         public static short GetAlly2CurrentATB()
         {
-            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Ally2CurrentATB);
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + Ally2CurrentATB);
             return helper.ReadMemory<short>(targetAddress);
         }
-        public static short GetAlly1CurrentATB()
+        public static short GetAlly1CurrentATB() 
         {
-            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Ally1CurrentATB);
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + Ally1CurrentATB);
             return helper.ReadMemory<short>(targetAddress);
         }
         static public byte GetCommandPosition()
@@ -383,9 +383,9 @@ namespace FF8TAS
             return value;
         }
 
-        static public byte GetOptionChoice()
+        static public byte GetOptionChoice(int chanID = 0)
         {
-            ulong targetAddress = helper.GetBaseAddress(OptionChoice_Address);
+            ulong targetAddress = helper.GetBaseAddress(OptionChoice_Address + 0x3C * (uint)chanID);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
@@ -422,7 +422,7 @@ namespace FF8TAS
 
         static public byte GetBattleTarget()
         {
-            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - BattleTarget_Address);
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + BattleTarget_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
@@ -431,14 +431,107 @@ namespace FF8TAS
 
         static public byte GetBattleCommand()
         {
-            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - BattleCommand_Address);
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + BattleCommand_Address);
             byte value = helper.ReadMemory<byte>(targetAddress);
             return value;
         }
         // 18fe9b8
 
-        private static ulong MagicChoiceIndex_Address = 0x0; // FF8_EN.exe+19768D8 -
-        private static ulong ChoiceMagicScale_Address = 0x0; // FF8_EN.exe+19768F1 -
-        private static ulong ChoiceStockCastScale_Address = 0x0; // FF8_EN.exe+19768F3 -
+        private static ulong MagicChoiceIndex_Address = 0x77F20; // FF8_EN.exe+19768D8 -
+        static public byte GetMagicChoiceIndex()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + MagicChoiceIndex_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        private static ulong ChoiceMagicScale_Address = 0x77F39; // FF8_EN.exe+19768F1 - 
+
+        /// <summary>
+        /// Equals 16 when finished scaling
+        /// </summary>
+        /// <returns></returns>
+        static public byte GetChoiceMagicScale()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + ChoiceMagicScale_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        private static ulong ChoiceStockCastScale_Address = 0x77F3B; // FF8_EN.exe+19768F3 -
+
+        /// <summary>
+        /// Equals 16 when finished scaling
+        /// </summary>
+        /// <returns></returns>
+        static public byte GetChoiceStockCastScale()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + ChoiceStockCastScale_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        private static ulong CommandSelectedType_Address = 0x77EA8; // FF8_EN.exe+1976860 - 18fe9b8
+
+        static public byte GetCommandSelectedType()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + CommandSelectedType_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        private static ulong CommandWindowScale_Address = 0x77E89; // FF8_EN.exe+1976841
+
+        static public byte GetCommandWindowScale()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + CommandWindowScale_Address);
+            return helper.ReadMemory<byte>(targetAddress);
+        }
+
+        
+
+        private static ulong Targetting_Address = 0x285946; // FF8_EN.exe+1679072 18fe9b8
+
+        static public bool IsTargetting()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - Targetting_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value == 1;
+        }
+
+        private static ulong SquallItems_Address = 0x89B; // FF8_EN.exe+18FF253 18fe9b8
+
+        static public byte GetSquall_ItemAmount(int slot = 0)
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + SquallItems_Address + (uint)slot * 0x5);
+            return helper.ReadMemory<byte>(targetAddress);
+        }
+
+        private static ulong BattleSelectedCharacter_Address = 0x77E8C; // FF8_EN.exe+1976844
+
+        static public byte GetSelectedAlly()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + BattleSelectedCharacter_Address);
+            return helper.ReadMemory<byte>(targetAddress);
+        }
+
+        private static ulong EnemyHealth_Address = 0x293E0; // FF8_EN.exe+1927D98
+
+        static public short GetEnemyHealth(int enemyID = 0)
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + EnemyHealth_Address + (uint)enemyID * 0x0D);
+            return helper.ReadMemory<short>(targetAddress);
+        }
+
+        private static ulong DialogueSize_Address = 0x0; // FF8_EN.exe+1927D98
+
+        static public short GetDialogueSize(int chanID = 0)
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + EnemyHealth_Address + DialogueSize_Address + (uint)chanID * 0x0);
+            return helper.ReadMemory<short>(targetAddress);
+        }
+
+        // FF8_EN.exe+1927D98  FF8_EN.exe+1927E68 　FF8_EN.exe+1927F38
+        // next slot = 0x5
     }
 }
