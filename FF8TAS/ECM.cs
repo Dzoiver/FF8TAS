@@ -752,22 +752,15 @@ namespace FF8TAS
             }
             Console.WriteLine("Battle started");
             GameInput.ReleaseUp();
+            Fight fight = new Fight();
+            fight.Bats();
         }
 
         public void FireCavern()
         {
             GameInput.ChangeFps(GameInput.State.Field);
-            // TravelToCavern();
-            // CavernEntrance();
-
-            GameInput.HoldUp();
-
-            while (Memory.GetPreviousMapID() != 129)
-            {
-                Thread.Sleep(pollTime);
-            }
-            GameInput.ReleaseUp();
-
+            TravelToCavern();
+            CavernEntrance();
             InsideCavern();
         }
 
@@ -782,26 +775,19 @@ namespace FF8TAS
                 Thread.Sleep(pollTime);
             }
             GameInput.ReleaseCircle(8);
-            GameInput.ReleaseUp();
+            // Enter menu
             for (int i = 0; i < 40; i++)
             {
-                GameInput.ReleaseUp(1);
-
+                GameInput.ReleaseUp();
+                // Wait until menu fully opened 
                 while (Memory.GetMenuCursorStatus() != 3)
                 {
                     Thread.Sleep(pollTime);
                 }
-                GameInput.PressTriangle(16);
-                GameInput.HoldUp(1);
-                Thread.Sleep(533);
-                //while (Memory.GetWMStatus() != 0){Thread.Sleep(1);}
-                GameInput.HoldCircle(35);
-                GameInput.ReleaseCircle();
-
-                while (Memory.GetMenuCursorStatus() != 1)
-                {
-                    Thread.Sleep(pollTime);
-                }
+                GameInput.PressTriangle(16); // Leave menu
+                GameInput.HoldUp();
+                Thread.Sleep(533); // Wait till fade out
+                GameInput.PressCircle(33); // Enter menu
             }
             while (Memory.GetMenuCursorStatus() != 3)
             {

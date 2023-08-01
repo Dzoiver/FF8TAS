@@ -83,7 +83,6 @@ namespace FF8TAS
         static public void HoldUp(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Up);
-            WaitOneFrame(wait);
         }
         static public void HoldRight(int wait = 0)
         {
@@ -104,7 +103,6 @@ namespace FF8TAS
         static public void ReleaseUp(int wait = 0)
         {
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Up);
-            WaitOneFrame(wait);
         }
         static public void ReleaseRight(int wait = 0)
         {
@@ -125,7 +123,6 @@ namespace FF8TAS
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.X);
             WaitOneFrame(wait);
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.X);
-            WaitOneFrame(wait);
         }
 
         static public void PressRight()
@@ -149,7 +146,6 @@ namespace FF8TAS
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Down);
             WaitOneFrame(wait);
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Down);
-            WaitOneFrame(wait);
         }
 
         static public void PressUp(int wait = 0)
@@ -157,7 +153,6 @@ namespace FF8TAS
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Up);
             WaitOneFrame(wait);
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Up);
-            WaitOneFrame(wait);
         }
 
         static public void HoldX()
@@ -183,7 +178,6 @@ namespace FF8TAS
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
             WaitOneFrame(wait);
             isim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
-            WaitOneFrame(wait);
         }
 
         static public void PressR1()
@@ -257,7 +251,7 @@ namespace FF8TAS
         static public void HoldCircle(int wait = 0)
         {
             isim.Keyboard.KeyDown((WindowsInput.Native.VirtualKeyCode)Controls.Circle);
-            WaitOneFrame(wait);
+            // WaitOneFrame(wait);
         }
 
         static public void ReleaseCircle(int wait = 0)

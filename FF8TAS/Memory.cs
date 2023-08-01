@@ -410,15 +410,35 @@ namespace FF8TAS
                 return false;
         }
 
-        private static ulong PreviousMapID_Adress = 0x54; // FF8_EN.exe+18FEA0C
+        private static ulong PreviousMapID_Address = 0x54; // FF8_EN.exe+18FEA0C
         static public short GetPreviousMapID()
         {
-            ulong targetAddress = helper.GetBaseAddress(PreviousMapID_Adress + Language.BaseAddress);
+            ulong targetAddress = helper.GetBaseAddress(PreviousMapID_Address + Language.BaseAddress);
             short value = helper.ReadMemory<short>(targetAddress);
             return value;
         }
-        // 156ED16
-        // 18E4906
-        // 18E4A68
+
+        private static ulong BattleTarget_Address = 0x77ECC; // FF8_EN.exe+1976884 -
+
+        static public byte GetBattleTarget()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - BattleTarget_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+
+        private static ulong BattleCommand_Address = 0x77E8B; // FF8_EN.exe+1976843 -
+
+        static public byte GetBattleCommand()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - BattleCommand_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            return value;
+        }
+        // 18fe9b8
+
+        private static ulong MagicChoiceIndex_Address = 0x0; // FF8_EN.exe+19768D8 -
+        private static ulong ChoiceMagicScale_Address = 0x0; // FF8_EN.exe+19768F1 -
+        private static ulong ChoiceStockCastScale_Address = 0x0; // FF8_EN.exe+19768F3 -
     }
 }
