@@ -11,7 +11,7 @@ namespace FF8TAS
         private static ulong BaseAddressEN = 0x18fe9b8;
 
         private static ulong EN_fieldX = 0x1677238;
-        private static ulong EN_fieldY = 0x167723C;
+        //private static ulong EN_fieldY = 0x167723C;
         private static ulong EN_BGDraw = 0x18E4906;
         private static ulong EN_TextStatus = 0x192B354;
         private static ulong EN_SqualAnim = 0x156ED16;
@@ -71,7 +71,7 @@ namespace FF8TAS
             {
                 BaseAddress = BaseAddressEN;
                 Memory.FieldX_Address = EN_fieldX;
-                Memory.FieldY_Address = EN_fieldY;
+                //Memory.FieldY_Address = EN_fieldY;
                 Memory.BGDraw_Address = EN_BGDraw;
                 Memory.TextStatus_Address = EN_TextStatus;
                 Memory.SquallAnim_Address = EN_SqualAnim;

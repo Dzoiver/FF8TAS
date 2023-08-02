@@ -57,12 +57,16 @@ namespace FF8TAS
                     }
                 }
 
-                if (Memory.LastTextStatus == 13) // Choice is ready
+                if (Memory.LastTextStatus == 12) // Transparent choice
                 {
                     while (Memory.GetDialogueSize(id) != 16)
                     {
                         Thread.Sleep(pollTime);
                     }
+                }
+
+                if (Memory.LastTextStatus == 13) // Choice is ready
+                {
                     Choices.Choice desiredChoice = Choices.GetNextChoice();
                     while (Memory.GetOptionChoice(id) != desiredChoice.desiredID && desiredChoice.name != "") // Not Finished Printing
                     {
@@ -73,8 +77,6 @@ namespace FF8TAS
                     }
                     Console.WriteLine("Desired option reached");
                 }
-
-                Console.WriteLine("last text status: " + Memory.LastTextStatus);
                 GameInput.PressX(33);
                 textBoxCount++;
                 // Console.WriteLine("Cleared " + textBoxCount + " text");
@@ -683,7 +685,7 @@ namespace FF8TAS
 
         private void CavernEntrance()
         {
-            if (Memory.GetStoryProgress() >= 21)
+            if (Memory.GetStoryProgress() != 17)
                 return;
 
             GameInput.HoldUp();
@@ -705,7 +707,7 @@ namespace FF8TAS
             GameInput.ReleaseUp();
             GameInput.PressX();
 
-            while (!Memory.CanMove())
+            while (Memory.GetFieldY() < 5000)
             {
                 Thread.Sleep(pollTime);
             }
@@ -718,9 +720,11 @@ namespace FF8TAS
             GameInput.ReleaseUp();
         }
 
-        private void InsideCavern()
+        private void CavernInside()
         {
-            Thread.Sleep(50);
+            if (Memory.GetFieldID() != 131)
+                return;
+            Thread.Sleep(66);
             GameInput.HoldUp(1);
             GameInput.HoldRight(1);
 
@@ -759,16 +763,31 @@ namespace FF8TAS
             }
             Console.WriteLine("Battle started");
             GameInput.ReleaseUp();
-            Fight fight = new Fight();
-            fight.Bats();
+
+            CavernFights();
+
         }
 
+        private void CavernFights()
+        {
+            Fight fight = new Fight();
+            fight.Bats();
+            Console.WriteLine("Continue moving up");
+            GameInput.HoldUp();
+
+            while (!Memory.IsBattle())
+            {
+                Thread.Sleep(pollTime);
+            }
+            GameInput.ReleaseUp();
+            fight.RunFromEncounter();
+        }
         public void FireCavern()
         {
             GameInput.ChangeFps(GameInput.State.Field);
             //TravelToCavern();
             CavernEntrance();
-            InsideCavern();
+            CavernInside();
         }
 
 

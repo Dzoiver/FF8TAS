@@ -17,6 +17,10 @@ namespace FF8TAS
     {
         static private Process ff8Process;
         static private MemoryHelper64 helper;
+        static private int lastX = 0;
+        static private int lastY = 0;
+        static private int lastZ = 0;
+
         public static int LastTextStatus;
 
         [DllImport("User32.dll")]
@@ -59,9 +63,9 @@ namespace FF8TAS
             SetForegroundWindow(h);
             Console.WriteLine("Game is focused");
         }
-
+        // 18fe9b8
         public static ulong FieldX_Address;
-        public static ulong FieldY_Address;
+        public static ulong FieldY_Address = 0x28777C; // FF8_EN.exe+167723C
         public static ulong BGDraw_Address;
         public static ulong TextStatus_Address;
         public static ulong SquallAnim_Address;
@@ -147,6 +151,7 @@ namespace FF8TAS
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + StoryProgress_Address);
             int value = helper.ReadMemory<int>(targetAddress);
+            Console.WriteLine(value);
             return value;
         }
         static public bool IsBattle()
@@ -337,18 +342,59 @@ namespace FF8TAS
             return value == 0;
         }
 
-        static public short GetFieldX()
+        static public int GetFieldX()
         {
             ulong targetAddress = helper.GetBaseAddress(FieldX_Address);
-            short value = helper.ReadMemory<short>(targetAddress);
-            return value;
+            int value = helper.ReadMemory<int>(targetAddress);
+            if (value < 32000 && value > -32000)
+            {
+                lastX = value;
+            }
+            return lastX;
         }
-        static public short GetFieldY()
+        static public int GetFieldY()
         {
-            ulong targetAddress = helper.GetBaseAddress(FieldY_Address);
-            short value = helper.ReadMemory<short>(targetAddress);
-            return value;
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - FieldY_Address);
+            int value = helper.ReadMemory<int>(targetAddress);
+            if (value < 32000 && value > -32000)
+            {
+                lastY = value;
+            }
+            return lastY;
+            //byte[] bytes = helper.ReadMemoryBytes(targetAddress, 4);
+            //bytes[3] = 0;
+            /*
+            foreach (byte b in bytes)
+            {
+                Console.WriteLine(b);
+            }
+            
+            Console.WriteLine(value);
+            */
+            //int value = BitConverter.ToInt32(bytes, 0);
+
+            //if (!BitConverter.IsLittleEndian)
+            //Array.Reverse(bytes);
+
+            //int value = BitConverter.ToInt32(bytes, 0);
+            //Console.WriteLine(value);
+            //return value;
         }
+        public static ulong FieldZ_Address = 0x287778; // 1677240 18fe9b8
+
+        static public int GetFieldZ()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress - FieldZ_Address);
+            int value = helper.ReadMemory<int>(targetAddress);
+            if (value > short.MaxValue || value < short.MinValue)
+            {
+                return lastZ;
+            }
+            lastZ = value;
+            return lastZ;
+
+        }
+
         static public byte GetBGDraw()
         {
             ulong targetAddress = helper.GetBaseAddress(BGDraw_Address);
@@ -501,10 +547,12 @@ namespace FF8TAS
 
         private static ulong SquallItems_Address = 0x89B; // FF8_EN.exe+18FF253 18fe9b8
 
-        static public byte GetSquall_ItemAmount(int slot = 0)
+        static public byte GetSquall_MagicAmount(int slot = 0)
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + SquallItems_Address + (uint)slot * 0x5);
-            return helper.ReadMemory<byte>(targetAddress);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            Console.WriteLine("Magic amount: " + value);
+            return value;
         }
 
         private static ulong BattleSelectedCharacter_Address = 0x77E8C; // FF8_EN.exe+1976844
@@ -520,16 +568,28 @@ namespace FF8TAS
         static public short GetEnemyHealth(int enemyID = 0)
         {
             ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + EnemyHealth_Address + (uint)enemyID * 0x0D);
-            return helper.ReadMemory<short>(targetAddress);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+            Console.WriteLine("EnemyHealth: " + value);
+            return value;
         }
 
-        private static ulong DialogueSize_Address = 0x0; // FF8_EN.exe+1927D98
+        private static ulong DialogueSize_Address = 0x2C995; // FF8_EN.exe+192B34D 18fe9b8
 
-        static public short GetDialogueSize(int chanID = 0)
+        static public byte GetDialogueSize(int chanID = 0)
         {
-            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + EnemyHealth_Address + DialogueSize_Address + (uint)chanID * 0x0);
-            return helper.ReadMemory<short>(targetAddress);
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + DialogueSize_Address + (uint)chanID * 0x3C);
+            return helper.ReadMemory<byte>(targetAddress);
         }
+
+        private static ulong ATB_Status_Address = 0x2A433; // FF8_EN.exe+1928DEB 18fe9b8
+        static public bool IsATB_Active()
+        {
+            ulong targetAddress = helper.GetBaseAddress(Language.BaseAddress + ATB_Status_Address);
+            byte value = helper.ReadMemory<byte>(targetAddress);
+
+            return value == 1;
+        }
+        // FF8_EN.exe+1928DEB
 
         // FF8_EN.exe+1927D98  FF8_EN.exe+1927E68 　FF8_EN.exe+1927F38
         // next slot = 0x5

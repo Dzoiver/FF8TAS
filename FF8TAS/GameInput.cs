@@ -25,7 +25,7 @@ namespace FF8TAS
         {
             Battle = 15,
             Field = 30,
-            Menu = 59,
+            Menu = 60,
             WM = 30
         }
 
@@ -271,12 +271,13 @@ namespace FF8TAS
         {
             if (wait != 0)
             {
-                Console.WriteLine(wait.ToString());
                 Thread.Sleep(wait);
                 return;
             }
             float time = 1 / (float)fps * 1000;
-            Thread.Sleep((int)Math.Round(time));
+            int timeSleep = (int)Math.Round(time);
+            //Console.WriteLine(timeSleep);
+            Thread.Sleep(timeSleep);
         }
 
         static private void WaitHalfFrame()

@@ -38,7 +38,6 @@ namespace FF8TAS
 
         public void RunFromEncounter()
         {
-            Console.WriteLine("Battle started");
             GameInput.ChangeFps(GameInput.State.Battle);
             GameInput.HoldR2();
             GameInput.HoldL2();
@@ -47,6 +46,10 @@ namespace FF8TAS
             {
                 if (AnyATB_Ready())
                     HoldATB();
+                else
+                {
+                    isATBHeld = false;
+                }
                 GameInput.WaitOneFrame();
             }
 
@@ -61,8 +64,14 @@ namespace FF8TAS
             GameInput.ChangeFps(GameInput.State.Battle);
             Console.WriteLine("Bats started");
 
+            while (Memory.GetCommandWindowScale() == 0)
+            {
+                Thread.Sleep(pollTime);
+            }
+
             if (Memory.GetSelectedAlly() == 0) // If Quistis first, do attack then draw
             {
+                Console.WriteLine("First turn by Quistis");
                 Attack();
 
                 ChooseCommand(Command.Draw);
@@ -72,6 +81,7 @@ namespace FF8TAS
             }
             else // If Squall first, do draw first
             {
+                Console.WriteLine("First turn by Squall");
                 ChooseCommand(Command.Draw);
                 SelectTarget(); // Bat
                 SelectDrawMagic(Magic.Unknown, 0);
@@ -80,12 +90,18 @@ namespace FF8TAS
                 Attack();
             }
 
+
             // Run when draw is happening or finished
-            while (Memory.GetSquall_ItemAmount(0) == 0 && Memory.GetEnemyHealth(0) != 0)
+            while (!IsEnemyDead() || !SquallHasThunders())
             {
-                // Attack();
+                if (CanAttack())
+                    Attack();
                 Thread.Sleep(pollTime);
             }
+            Console.WriteLine("All conditions are met");
+            Console.WriteLine("Squall magic: " + Memory.GetSquall_MagicAmount(0));
+            Console.WriteLine("Enemy health: " + Memory.GetEnemyHealth(0));
+
             RunFromEncounter();
         }
 
@@ -128,15 +144,11 @@ namespace FF8TAS
                     Memory.GetAlly3CurrentATB() == maxATB);
         }
 
-        private void SelectTarget(int targetID = 0)
+        private void SelectTarget(int targetID = 8)
         {
-            bool horizontal = true;
             while (Memory.GetBattleTarget() != targetID)
             {
-                if (horizontal)
-                {
-                    GameInput.PressDown();
-                }
+                GameInput.PressDown();
             }
             Thread.Sleep(pollTime);
             GameInput.PressX();
@@ -169,10 +181,13 @@ namespace FF8TAS
          * draw first spell
          * flee
         */
-
+        private bool CanAttack()
+        {
+            return Memory.GetCommandWindowScale() > 0;
+        }
         private void Attack()
         {
-            while (Memory.GetCommandWindowScale() != 16)
+            while (!CanAttack())
             {
                 Thread.Sleep(pollTime);
             }
@@ -194,10 +209,10 @@ namespace FF8TAS
         {
             if (isATBHeld)
                 return;
-
+            
             // Wait until get control
 
-            if (Memory.GetATBstatus() == 112)
+            if (!Memory.IsATB_Active())
             {
                 isATBHeld = true;
             }
@@ -208,13 +223,24 @@ namespace FF8TAS
             }
         }
 
+        private bool IsEnemyDead()
+        {
+            return Memory.GetEnemyHealth() == 0;
+        }
+
+        private bool SquallHasThunders()
+        {
+            return Memory.GetSquall_MagicAmount() > 0;
+        }
+
         private void BattleResult()
         {
             GameInput.ChangeFps(GameInput.State.Menu);
             Console.WriteLine("Result screen");
             while (Memory.GetBattleResult() == 1)
             {
-                GameInput.PressX();
+                GameInput.PressX(8);
+                Thread.Sleep(8);
             }
             Console.WriteLine("Battle end");
         }
